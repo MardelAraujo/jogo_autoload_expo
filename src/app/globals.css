@@ -1,0 +1,1479 @@
+/* ===== design system AutoMind =====
+   Tokens de marca, na grafia do briefing (docs/identidade-visual). São a fonte:
+   tudo abaixo que precisa da marca aponta pra cá em vez de repetir hex.
+
+   CUIDADO COM O NOME `--ink`. No briefing ele é o quase-preto #100F0F; aqui,
+   desde o porte, é a cor de TEXTO CLARO do HUD. Os dois vivem juntos porque
+   renomear o segundo mexeria em quarenta e poucas regras sem mudar um pixel —
+   os tokens de marca ficam todos sob `--brand-*`, sem colisão possível. */
+:root {
+  --brand-pink:#FA094E;        /* acento primário — botões, links, o que se toca */
+  --brand-pink-deep:#F70048;   /* variante de pressão e topo do degradê */
+  --brand-magenta:#940755;     /* parada intermediária do degradê */
+  --brand-purple:#44055A;      /* parada profunda */
+  --brand-navy:#03045E;        /* âncora — neutro escuro com personalidade */
+  --brand-navy-2:#102D74;
+  /* O degradê da marca na versão de QUATRO paradas — a do símbolo no kit, não a
+     de duas do texto do briefing. Com magenta e roxo no meio, o miolo da peça
+     ainda é da cor da marca; a rampa de duas paradas ia do rosa direto pro navy
+     e o meio já saía escuro.
+
+     Corre da ESQUERDA PRA DIREITA. O briefing escreve 180deg, mas as peças que
+     recebem o degradê aqui são todas mais largas que altas — botão, alvo de
+     toque, tarja —, e na horizontal a rampa tem o dobro do percurso pra fazer
+     as quatro cores. Na vertical ela precisava caber em 36–56 px.
+
+     As paradas 4%/88% são as do briefing: um fio de rosa chapado no começo e de
+     navy chapado no fim, pra rampa não nascer nem morrer exatamente no corte. */
+  --brand-gradient:linear-gradient(90deg,
+    var(--brand-pink) 4%, var(--brand-magenta) 38%, var(--brand-purple) 66%, var(--brand-navy) 88%);
+
+  /* Escala de 4 pt do briefing. Usada onde havia número solto de espaçamento;
+     o que é dimensionado pela ALTURA da janela (--u do montador, --l da
+     captação) continua fluido — é o que impede o cartão de virar rolagem. */
+  --e-1:4px; --e-2:8px; --e-3:12px; --e-4:16px; --e-5:20px; --e-6:24px;
+  --e-7:32px; --e-8:40px; --e-9:56px; --e-10:72px;
+
+  /* CANTO VIVO EM TUDO. O briefing tem dois raios (cartão macio e cápsula), mas
+     a decisão desta interface é canto reto — inclusive nos LEDs, no número da
+     etapa e no thumb do slider, que eram círculos.
+     Os três tokens continuam existindo, zerados: eles guardam a INTENÇÃO de
+     cada superfície (cartão, campo, cápsula), então voltar a arredondar é mexer
+     em três valores aqui, e não caçar quarenta regras de novo. */
+  --r-card:0; --r-input:0; --r-pill:0;
+
+  /* Sombra é exceção: o sistema se apoia em contraste e degradê, não em profundidade. */
+  --shadow-card:0 1px 2px rgba(0,0,0,.04), 0 8px 24px rgba(3,4,94,.06);
+  --shadow-pop:0 12px 32px rgba(247,0,72,.18);
+
+  /* Movimento contido: uma curva só (smooth-out), 180–240 ms pra mudança de
+     estado e 320–480 ms pra transição de layout. Sem quique. */
+  --ease:cubic-bezier(.2,.8,.2,1);
+  --t-estado:200ms; --t-layout:400ms;
+}
+
+:root {
+  --bg:#1c222b; --fg:#eaeaea; --card:#2e3641; --card2:#38414d;
+  --muted:#b3b3bd; --primary:var(--brand-pink); --ok:#2ecc71; --warn:#f5a623; --err:#ef4444;
+  --border:#4b5563;
+  /* Instrumentação. Estes seis nasceram dentro de #screen-builder, quando só o
+     montador falava essa língua; hoje a tela de captação, o HUD e o placar final
+     falam também, então eles sobem pra cá — nenhum token novo.
+     Aço frio em vez de cinza neutro: é o fundo que deixa o rosa da marca ler
+     como "linha viva" e não como "item selecionado".
+
+     A escala inteira subiu dois degraus (o painel era #141a22, quase preto).
+     Preto puro contra a maquete — que o próprio 3D pinta em cinza claro,
+     0xd6d6da — fazia a UI parecer um buraco recortado no terminal, e no estande,
+     com luz de feira batendo na TV, os fios de 1px de moldura sumiam. Ardósia
+     mantém o tema escuro e devolve a moldura. As cores de sinalização (rosa da
+     marca, verde, âmbar, vermelho) não se mexeram: elas ganham contraste de
+     graça quando o fundo sobe.
+
+     O briefing do design system pede fundo preto (#000/#100F0F) ou papel
+     (#F3F3F0). O ardósia FICA: a razão do parágrafo acima não mudou — a UI
+     flutua sobre uma maquete que o 3D pinta em cinza claro, e preto puro ali
+     vira buraco recortado. É a única desobediência de cor, e é deliberada. */
+  --pnl:#29323f; --steel:#6b7a8d; --steel-dim:#414c5b; --ink:#fff; --ink-dim:#fff;
+  /* A voz de instrumento — eyebrow, rótulo de campo, posição e pontos do placar —
+     era monoespaçada. O design system tem DUAS famílias e nenhuma delas é mono
+     ("No serif. No mono."), então ela passa a ser a face de display em caixa alta
+     com tracking largo, que é como o briefing especifica o eyebrow. O nome do
+     token mudou junto (`--mono` → `--display`) pra não mentir sobre o que carrega. */
+  --display:var(--font-archivo),'Archivo','Segoe UI',system-ui,sans-serif;
+}
+/* touchscreen de estande: sem mouse/hover, dedos maiores que ponteiro, tela tocada
+   por dezenas de visitantes por dia — toda superfície tocável precisa de alvo
+   grande (~48px+), feedback visual imediato ao toque (não há hover) e nenhum
+   gesto do navegador (callout de iOS, seleção, zoom) competindo com o jogo. */
+* { margin:0; padding:0; box-sizing:border-box; -webkit-tap-highlight-color:transparent;
+  -webkit-touch-callout:none; }
+/* 'Inter' nunca chegou a existir aqui: o arquivo é offline e não embutia fonte
+   nenhuma, então a TV do stand desenhava tudo em Segoe UI. Red Hat Display é a
+   face de texto da identidade AutoMind e viaja embutida via next/font/local
+   (layout.tsx), que expõe --font-red-hat-display. Sem ela o stack de sistema
+   continua valendo. */
+/* `pan-x pan-y` é a trava de gesto do totem, par do viewport de layout.tsx: o
+   dedo continua podendo ROLAR o que rola (o ranking, o painel), mas o
+   duplo-toque que amplia e a pinça sobre a interface deixam de existir. Quem
+   precisa de mais restrição pede menos — o canvas e os sliders declaram
+   `touch-action:none` e seguem valendo, porque restringir a mais é permitido;
+   o que nenhum descendente consegue é reabrir um gesto fechado aqui. */
+html,body { width:100%; height:100%; overflow:hidden; overscroll-behavior:none; background:var(--bg); color:var(--fg);
+  font-family:var(--font-red-hat-display),'Segoe UI',system-ui,sans-serif; user-select:none;
+  touch-action:pan-x pan-y; }
+/* Cápsula, não retângulo arredondado: o design system só tem dois raios, e o
+   botão é o lugar da pílula. O alvo de 56 px de altura fica — é ergonomia de
+   totem, não estética, e o briefing não fala de tamanho de alvo. */
+button { font-family:inherit; cursor:pointer; border:1px solid var(--steel-dim); background:var(--pnl);
+  color:var(--fg); border-radius:var(--r-pill); padding:15px 24px; font-size:16px; font-weight:700; min-height:56px;
+  touch-action:manipulation; transition:transform var(--t-estado) var(--ease), box-shadow var(--t-estado) var(--ease),
+  background-color var(--t-estado) var(--ease), border-color var(--t-estado) var(--ease); }
+button:disabled { opacity:.35; }
+/* Estados na letra do briefing: hover clareia 4%, toque escurece 4% e encolhe
+   para 0,985. Os dois véus entram como box-shadow inset — funciona igual sobre
+   cor chapada e sobre degradê, e não exige um pseudo-elemento em cada botão.
+
+   ATENÇÃO, se isto for ao estande: era `scale(.96)` com `brightness(1.18)`,
+   um retorno de toque bem mais forte. O briefing foi escrito para site com
+   mouse; num totem sem hover, 1,5% de escala e 4% de véu é pouca confirmação
+   para o dedo. Se o teste na TV mostrar gente tocando duas vezes, é aqui. */
+button:not(:disabled):hover { box-shadow:inset 0 0 0 999px rgba(255,255,255,.08); }
+button:not(:disabled):active { transform:scale(.985); box-shadow:inset 0 0 0 999px rgba(0,0,0,.08); }
+/* o foco de teclado é o mesmo em todo alvo do arquivo — o desenho nasceu no
+   cartão do montador e agora vale pros botões e campos das outras telas. */
+button:focus-visible, input:focus-visible, .lgpd:focus-within { outline:2px solid var(--ink); outline-offset:3px; }
+/* ===== onde o degradê entra no lugar do rosa chapado =====
+   Regra: só superfície PREENCHIDA e alta o bastante para a rampa acontecer —
+   botão primário, alvo de toque da missão, tarja de marco e botão ligado do
+   editor. Fora ficam as peças pequenas (barra de 3 px, dot de 7 px, thumb de
+   30 px, LED, número da etapa) e tudo que é borda, fio ou véu translúcido:
+   numa peça baixa a rampa chega ao navy antes de a peça acabar, e o que era
+   acento de marca vira mancha escura. Essas continuam no rosa chapado.
+   Quem recebe o degradê fica SEM contorno: a superfície já se separa do fundo
+   sozinha, e um fio rosa por cima dela só competia com a própria rampa. A
+   borda continua existindo, transparente, pra caixa não mudar de tamanho
+   entre os estados. E o atalho leva `no-repeat`: o ladrilho do gradiente sai
+   1 px mais estreito que a área pintada quando a largura do botão cai em
+   subpixel, e a repetição devolvia o começo da rampa — um fio rosa colado na
+   borda navy, justo o contorno rosa que este bloco existe para eliminar.
+
+   E a regra vale pro arquivo inteiro: NENHUMA borda, fio ou outline é rosa.
+   O rosa da marca fica em preenchimento, tinta de fundo, texto e LED — nunca
+   no contorno. Onde a borda era o único sinal de estado (chip escolhido,
+   cartão da frota, etapa selecionada, campo em foco, foco de teclado) ela
+   passa a var(--ink), o quase-branco: contra o fundo ardósia separa mais do
+   que o rosa separava, e continua lendo como "este aqui". Onde a peça já é
+   rosa por dentro (item do editor, ponto do traçado, dot do contador, número
+   da etapa) a borda vira transparent — desenhava o mesmo rosa duas vezes. */
+.btn-primary { background:var(--brand-gradient) no-repeat; border-color:transparent; color:#fff; }
+.btn-primary:not(:disabled):hover { box-shadow:inset 0 0 0 999px rgba(255,255,255,.08), var(--shadow-pop); }
+/* Botão de contorno: no escuro o briefing pede fio branco em vez de preenchimento,
+   e no hover ele se enche do rosa da marca. */
+.btn-ghost { background:transparent; border-color:rgba(255,255,255,.55); border-width:1.3px; }
+.btn-ghost:not(:disabled):hover { background:var(--brand-gradient) no-repeat; border-color:transparent; color:#fff;
+  box-shadow:none; }
+/* A seta que acompanha todo CTA: anda 4 px pra direita no hover. É o único
+   floreio de movimento do sistema. */
+.seta-cta { display:inline-block; transition:transform var(--t-estado) var(--ease); }
+button:not(:disabled):hover .seta-cta { transform:translateX(4px); }
+input { background:#1e2732; border:1.5px solid var(--steel-dim); border-radius:var(--r-input); color:var(--fg);
+  padding:14px 16px; font-size:16px; width:100%; min-height:50px; touch-action:manipulation;
+  transition:border-color var(--t-estado) var(--ease); }
+input::placeholder { color:#7d8899; }
+input:focus { outline:none; border-color:var(--ink); }
+input.erro { border-color:var(--err); }
+h1 span, .rosa { color:var(--primary); }
+/* Título na face de display, no aperto que o briefing manda: entrelinha 1 e
+   letter-spacing −0,01em ("Always tight"). Os apertos anteriores iam de −0,02
+   a −0,03em — ajuste no olho, de quando o título era desenhado na face de
+   texto e precisava fechar mais pra não parecer solto. */
+h1, h2, .jornada-tx { font-family:var(--display); letter-spacing:-.01em; }
+
+/* ===== ícones =====
+   Monoline, 24px, traço de 2px, sem preenchimento, herdando currentColor —
+   as regras do briefing. `flex:none` porque quase todo uso é dentro de uma
+   linha flex (rótulo de módulo, cabeçalho de alerta, botão com rótulo) e o
+   ícone não pode ser espremido quando o texto ao lado é longo. */
+.ico-ds { flex:none; display:inline-block; vertical-align:-.15em; }
+/* dentro de botão o ícone anda junto do rótulo, com o passo de 8px da escala */
+button .ico-ds { margin-right:var(--e-2); }
+/* Havia aqui um `button .ico-ds:only-child { margin-right:0 }` para o caso do
+   botão só de ícone. Ele nunca funcionou como guarda e fazia o oposto do
+   pretendido: o rótulo desses botões é um NÓ DE TEXTO, e nó de texto não conta
+   como filho, então o ícone de `<Icone/>Voltar` era "filho único" e perdia a
+   margem — o glifo encostava na letra em sete botões (Voltar, Exportar CSV,
+   Editor de planta, Apagar e cinco do editor). Só escapava o "Iniciar
+   operação", que tem <span> depois do texto.
+   A exceção saiu porque não existe botão só de ícone neste app. Se algum dia
+   existir, marque-o com uma classe: CSS não enxerga nó de texto. */
+/* rótulo de instrumento: a voz utilitária do arquivo. Nasceu no painel do
+   montador (.sec-label) e agora nomeia campo, KPI,
+   coluna e métrica em todas as telas — é o que amarra as quatro. */
+.eyebrow { display:flex; align-items:center; gap:10px; font:700 12px/1 var(--display);
+  letter-spacing:.18em; text-transform:uppercase; color:var(--steel); }
+.eyebrow::after { content:''; flex:1; height:1px; background:var(--steel-dim); }
+
+#scene { position:absolute; inset:0; touch-action:none; }
+
+/* ===== overlays =====
+   troca display:none por opacity+visibility: assim dá pra animar entrada/saída sem
+   coordenar timers em JS nos vários pontos que fazem classList.add/remove('hidden') —
+   a visibility só chaveia depois que o fade termina (transition-delay), então o overlay
+   fica fora do hit-test o tempo todo em que está de fato invisível. Cada tela soma um
+   transform próprio no .overlay-card (ou #builder-panel, mais abaixo) pra ter assinatura
+   de movimento própria em vez de um fade genérico repetido. */
+.overlay { position:fixed; inset:0; z-index:100; background:rgba(22,27,34,.55); backdrop-filter:blur(7px);
+  display:flex; align-items:center; justify-content:center; padding:20px; overflow-y:auto;
+  opacity:1; visibility:visible; transition:opacity .42s var(--ease), visibility 0s linear 0s; }
+.overlay.hidden { opacity:0; visibility:hidden; pointer-events:none;
+  transition:opacity .31s var(--ease), visibility 0s linear .31s; }
+/* mesma moldura de aço do painel do montador, para as quatro telas lerem como
+   um só instrumento. O raio grande fica: é o que separa "cartão que flutua
+   sobre a maquete" das superfícies fixas do HUD. */
+.overlay-card { background:var(--pnl); border:1px solid var(--steel-dim); border-radius:var(--r-card);
+  max-width:720px; width:100%; padding:30px 34px; max-height:96vh; overflow-y:auto;
+  transform:scale(1) translateY(0); transition:transform var(--t-layout) var(--ease); }
+.overlay.hidden .overlay-card { transform:scale(.93) translateY(14px); transition:transform var(--t-layout) var(--ease); }
+/* "Jornada Concluída" — o fecho da simulação, antes do placar. Não usa
+   .overlay-card de propósito: as outras quatro telas são instrumentos de aço
+   que pedem leitura; esta é um selo, uma coisa só, lida de longe na TV do
+   stand. Verde é o --ok que o resto do HUD já usa pra "deu certo", e o logo
+   herda o branco por currentColor (LOGO_AUTOLOAD_SVG tem fill=currentColor). */
+.jornada-card { background:var(--ok); color:#fff; border-radius:var(--r-card); padding:44px 62px;
+  display:flex; flex-direction:column; align-items:center; gap:20px; text-align:center;
+  box-shadow:0 24px 70px rgba(46,204,113,.28);
+  transform:scale(1); transition:transform var(--t-layout) var(--ease); }
+.overlay.hidden .jornada-card { transform:scale(.9); transition:transform var(--t-layout) var(--ease); }
+.overlay:not(.hidden) .jornada-card { animation:jornadaEntra .55s var(--ease); }
+.overlay:not(.hidden) .jornada-logo svg { animation:noAcende .6s var(--ease) .1s both; }
+@keyframes jornadaEntra { from{ opacity:0; transform:scale(.6) translateY(18px); } }
+.jornada-logo svg { height:clamp(38px, 6.4vw, 66px); width:auto; display:block; }
+.jornada-tx { font-weight:800; font-size:clamp(22px, 3.4vw, 34px); line-height:1.1; letter-spacing:-.01em; }
+/* modo de espera pós-placar: mesmo selo "Jornada Concluída", com contagem
+   regressiva de 10s até liberar o totem pro próximo visitante. */
+.jornada-aguardo-tx { display:none; font-size:15px; font-weight:600; opacity:.92;
+  padding-top:4px; border-top:1px solid rgba(255,255,255,.25); width:100%; }
+.jornada-card.aguardo .jornada-aguardo-tx { display:block; animation:slideUp .4s ease .3s both; }
+.jornada-card.aguardo { animation:jornadaEntra .55s var(--ease), pulse 2s ease-in-out .55s infinite; }
+.overlay-card h1 { font-size:30px; line-height:1.1; letter-spacing:-.01em; margin-bottom:5px; color:#fff; }
+.overlay-card .sub { color:var(--ink-dim); font-size:14.5px; line-height:1.4; margin-bottom:16px; }
+/* Chamava-se `.premio` de quando havia um: o chopp para o top 3. O brinde saiu
+   do jogo e a caixa ficou — hoje ela carrega a promessa do desafio na tela de
+   captação. O nome novo diz o PAPEL (é o destaque do cartão) e não um prêmio
+   que não existe mais; nome de classe que descreve conteúdo extinto manda
+   procurar código que não está lá.
+
+   A tinta rosa de 7% no fundo é todo o destaque de que ela precisa. O fio de
+   3px à esquerda saiu com os demais contornos rosa — a caixa tingida já pesa
+   mais que a vizinha sem ele. */
+.destaque { background:rgba(250,9,78,.07); border:1px solid var(--steel-dim);
+  border-radius:0; padding:12px 15px; font-size:14.5px; line-height:1.4; margin-bottom:16px; }
+.campo { margin-bottom:12px; } .campo label { display:block; font:700 11.5px/1 var(--display); text-transform:uppercase;
+  letter-spacing:.14em; color:var(--steel); margin-bottom:7px; }
+.lgpd { display:flex; gap:12px; align-items:flex-start; font-size:13.5px; line-height:1.4; color:var(--ink-dim);
+  margin:14px 0; cursor:pointer; touch-action:manipulation; border-radius:var(--r-input); }
+.lgpd input { width:24px; height:24px; min-height:0; flex-shrink:0; margin-top:2px; accent-color:var(--primary); }
+.adm-link { font:600 13px/1 var(--display); letter-spacing:.06em; color:var(--steel); text-decoration:underline;
+  text-underline-offset:3px; cursor:pointer; padding:8px 0; display:inline-block; touch-action:manipulation; }
+
+/* ===== placar do dia =====
+   Era uma <table> de quatro colunas, com uma célula própria só para o emoji do
+   brinde. Num totem visto de longe o que se procura é UMA coisa — "eu estou
+   entre os três?" —, e isso é posição e pontos, não uma grade. Agora é uma
+   lista: a posição em mono à esquerda e os pontos tabulares à direita (dígito
+   alinhado com dígito, então a coluna de pontos se lê de relance). */
+.rank-box { background:#202935; border:1px solid var(--steel-dim); border-radius:var(--r-card); padding:13px 15px; margin-top:16px; }
+.rank-titulo { font:700 11.5px/1 var(--display); letter-spacing:.16em; text-transform:uppercase; color:var(--steel);
+  display:flex; align-items:center; gap:9px; margin-bottom:9px; }
+.rank-titulo::after { content:''; flex:1; height:1px; background:var(--steel-dim); }
+.rank-linha { display:flex; align-items:baseline; gap:10px; padding:6px 0; border-bottom:1px solid var(--steel-dim);
+  font-size:13.5px; }
+.rank-linha:last-child { border-bottom:none; }
+.rank-linha .pos { flex:0 0 auto; min-width:26px; font:700 12px/1 var(--display); letter-spacing:.04em; color:var(--steel); }
+.rank-linha .quem { flex:1; min-width:0; overflow:hidden; text-overflow:ellipsis; white-space:nowrap; color:var(--ink); }
+.rank-linha .quem span { color:var(--ink-dim); }
+.rank-linha .pts { flex:0 0 auto; font:700 14.5px/1 var(--display); font-variant-numeric:tabular-nums;
+  color:var(--ink-dim); white-space:nowrap; }
+.rank-linha .pts small { font-size:10px; font-weight:600; letter-spacing:.1em; color:var(--steel); margin-left:3px; }
+/* as três primeiras são a única distinção que importa aqui — daí `podio`, e
+   não `premiada`: elas continuam em destaque depois que o brinde saiu, porque
+   o que marca as três não era o chopp, era o pódio. */
+.rank-linha.podio .pos, .rank-linha.podio .pts { color:var(--primary); }
+.rank-linha.podio .quem { font-weight:700; color:#fff; }
+.rank-linha.eu { background:rgba(250,9,78,.12); box-shadow:inset 3px 0 0 var(--primary);
+  margin:0 -15px; padding-left:12px; padding-right:15px; }
+
+/* ===== tela de captação: cabe na janela, sem rolagem =====
+   O cartão de cadastro era o único overlay que rolava: em tablet deitado o
+   visitante precisava arrastar pra achar o botão, e num totem de exposição
+   rolagem escondida é conversão perdida. Nada foi removido do formulário —
+   ele passou a se dimensionar pela ALTURA da janela, como o painel do
+   montador faz com --u: `--l` é a unidade da tela de captação e todo espaço
+   interno é múltiplo dela, então o cartão encolhe junto com a janela em vez
+   de estourar e virar scroll. Nome/Empresa dividem a mesma linha (os dois
+   campos curtos) e o WhatsApp fica embaixo, cortando uma altura de campo
+   inteira. Os alvos de toque continuam grandes: input e botão têm piso em
+   px, não só em --l. */
+#screen-lead { padding:clamp(8px, 2vh, 20px); overflow:hidden; }
+#screen-lead .overlay-card { --l:clamp(8.5px, 1.32vh, 13px);
+  max-width:620px; max-height:100%; overflow:visible;
+  padding:calc(var(--l)*1.9) calc(var(--l)*2.2); border-radius:var(--r-card); }
+.lead-logo { display:block; width:min(230px, 60%); height:auto; margin-bottom:calc(var(--l)*.9); }
+.lead-logo svg { width:100%; height:100%; display:block; }
+#screen-lead .eyebrow { font-size:calc(var(--l)*.86); gap:calc(var(--l)*.85);
+  margin-bottom:calc(var(--l)*.8); }
+#screen-lead h1 { font-size:calc(var(--l)*2.25); line-height:1.08; letter-spacing:-.01em;
+  margin-bottom:calc(var(--l)*.35); }
+#screen-lead .sub { font-size:calc(var(--l)*1.1); line-height:1.34; margin-bottom:calc(var(--l)*1.1);
+  max-width:52ch; }
+#screen-lead .destaque { font-size:calc(var(--l)*1.05); line-height:1.34;
+  padding:calc(var(--l)*.85) calc(var(--l)*1.15); border-radius:0;
+  margin-bottom:calc(var(--l)*1.2); }
+#lead-campos { display:grid; grid-template-columns:1fr 1fr; gap:calc(var(--l)*.85) calc(var(--l)*1.1); }
+#lead-campos .campo { margin:0; min-width:0; }
+#lead-campos .campo:last-child { grid-column:1 / -1; }
+#screen-lead .campo label { font-size:calc(var(--l)*1); margin-bottom:calc(var(--l)*.4); }
+/* "(opcional)" no rótulo: mesma linha, sem itálico e sem virar um segundo nível
+   de leitura — só o peso e a opacidade dizem que é acessório. */
+#screen-lead .campo label em { font-style:normal; font-weight:400; opacity:.55; }
+#screen-lead input[type=text], #screen-lead .campo input {
+  padding:calc(var(--l)*.9) calc(var(--l)*1.2); min-height:max(44px, calc(var(--l)*4)); font-size:16px;
+  border-radius:var(--r-input); }
+/* o consentimento é um alvo grande de propósito: a frase inteira é o <label>,
+   então tocar em qualquer palavra marca a caixa. O padding é o que faz esse
+   alvo existir de fato, e não só no papel. */
+#screen-lead .lgpd { font-size:calc(var(--l)*1); line-height:1.34; gap:calc(var(--l)*1);
+  margin:calc(var(--l)*1.15) 0; padding:calc(var(--l)*.5) calc(var(--l)*.7);
+  margin-left:calc(var(--l)*-.7); margin-right:calc(var(--l)*-.7); }
+#screen-lead .lgpd input { width:calc(var(--l)*2.2); height:calc(var(--l)*2.2); min-width:20px; min-height:20px; }
+#screen-lead .btn-primary { width:100%; font-size:calc(var(--l)*1.4); letter-spacing:.01em;
+  padding:calc(var(--l)*1.1) calc(var(--l)*1.5); min-height:max(48px, calc(var(--l)*4.4));
+  border-radius:var(--r-pill); }
+/* celular estreito: dois campos lado a lado cortariam o placeholder — aqui
+   sobra altura, então a linha dupla volta a ser empilhada. */
+@media (max-width:470px) { #lead-campos { grid-template-columns:1fr; } }
+
+/* ===== tela de início: a vitrine =====
+   As outras quatro telas são cartões de aço que pedem leitura de perto. Esta
+   não é: é o que o visitante vê do corredor, e o que ele precisa ver é o
+   TERMINAL — que já estava lá, renderizado em tela cheia atrás do cadastro,
+   tapado por um cartão. Então aqui não há cartão. O menu encosta na borda
+   esquerda (o lado em que a maquete tem menos coisa) e a maquete fica inteira
+   à direita, girando devagar, com o caminhão de rota andando nela.
+   O placar do dia, o som e o acesso do operador moram aqui agora: são as
+   coisas que se leem de longe ou que o operador do stand mexe entre um
+   visitante e outro. O cadastro ficou só com o que é cadastro. */
+#screen-start { background:none; backdrop-filter:none; padding:0; overflow:hidden;
+  align-items:center; justify-content:flex-start; }
+/* o degradê é o que dá contraste ao texto sem tapar a maquete: preto na borda
+   esquerda, nada antes dos três quartos da tela. */
+#screen-start::before { content:''; position:absolute; inset:0; pointer-events:none;
+  background:linear-gradient(90deg, #1a2028 0%, rgba(26,32,40,.9) 30%, rgba(26,32,40,.54) 48%, transparent 72%); }
+#start-menu { --s:clamp(9px, 1.55vh, 15px);
+  position:relative; width:min(470px, 42vw); margin-left:calc(var(--s)*3.4);
+  padding:calc(var(--s)*1.8); display:flex; flex-direction:column;
+  transition:transform var(--t-layout) var(--ease), opacity var(--t-layout); }
+.overlay.hidden #start-menu { transform:translateX(calc(var(--s)*-2)); opacity:0;
+  transition:transform var(--t-layout) var(--ease), opacity var(--t-layout); }
+/* mesmos cantos do visor da maquete: marca a área como instrumento, não pôster */
+#start-menu .mq-tick { width:calc(var(--s)*1.7); height:calc(var(--s)*1.7); }
+#start-menu .eyebrow { font-size:calc(var(--s)*.86); margin-bottom:calc(var(--s)*1.4); }
+/* Alvo do gesto de admin. O texto tem ~12px de altura; a área tocável cresce
+   para ~34px por padding, e a margem negativa devolve o espaço para o layout
+   não se mexer um pixel. Continua invisível — quem não sabe do gesto não vê
+   nada de diferente. */
+#start-menu .eyebrow-adm { padding:11px 0; margin-top:-11px;
+  margin-bottom:calc(var(--s)*1.4 - 11px); cursor:default; touch-action:none; }
+/* Retorno visual do hold: o fio de 1px que o .eyebrow já desenha à direita do
+   texto acende em rosa enquanto o dedo está em cima. Quem não conhece o gesto
+   continua sem ver nada; quem está segurando descobre que a contagem existe,
+   em vez de desistir achando que não funcionou.
+
+   É uma troca de cor e não uma barra de progresso de propósito. A versão
+   animada (scaleX de 0 a 1 em 1,5 s) foi escrita e descartada: medida com
+   `document.getAnimations()`, ela fica presa em `currentTime: 0` enquanto o
+   loop de render do Three.js está desenhando o terminal — e aí o fio some em
+   vez de crescer, que é pior do que não ter animação nenhuma. O totem do
+   stand não tem GPU dedicada; esse é o caso a proteger, não o desktop. */
+#start-menu .eyebrow-adm.adm-segurando::after { background:var(--primary); }
+#start-menu .eyebrow-adm.adm-segurando { color:var(--primary); }
+#start-logo { display:block; width:min(330px, 100%); color:#fff; margin-bottom:calc(var(--s)*1.4); }
+#start-logo svg { width:100%; height:auto; display:block; }
+#start-menu h1 { font-size:calc(var(--s)*2.6); line-height:1.04; letter-spacing:-.01em;
+  color:#fff; margin-bottom:calc(var(--s)*.6); }
+#start-menu .sub { color:var(--ink-dim); font-size:calc(var(--s)*1.14); line-height:1.35;
+  max-width:36ch; margin-bottom:calc(var(--s)*1.3); }
+/* o único alvo grande da tela: quem passa no corredor tem que ver o que fazer */
+#btn-comecar { width:100%; font-size:calc(var(--s)*1.5); letter-spacing:.01em;
+  padding:calc(var(--s)*1.2) calc(var(--s)*1.5); min-height:max(52px, calc(var(--s)*4.6));
+  border-radius:var(--r-pill); box-shadow:0 calc(var(--s)*.7) calc(var(--s)*2.4) rgba(250,9,78,.32); }
+/* O brilho acima é regra de ID e vencia o `box-shadow` do véu de toque do
+   botão comum, deixando o maior alvo da tela sem resposta ao dedo. Aqui os
+   dois andam juntos: o véu por dentro, o brilho por fora. */
+#btn-comecar:not(:disabled):hover { box-shadow:inset 0 0 0 999px rgba(255,255,255,.08),
+  0 calc(var(--s)*.7) calc(var(--s)*2.4) rgba(250,9,78,.32); }
+#btn-comecar:not(:disabled):active { box-shadow:inset 0 0 0 999px rgba(0,0,0,.08),
+  0 calc(var(--s)*.7) calc(var(--s)*2.4) rgba(250,9,78,.32); }
+#start-menu .rank-box { background:rgba(16,21,28,.72); margin-top:calc(var(--s)*1.3);
+  padding:calc(var(--s)*1) calc(var(--s)*1.2); border-radius:var(--r-card); }
+#start-menu .rank-titulo { font-size:calc(var(--s)*.86); margin-bottom:calc(var(--s)*.7); }
+#start-menu .rank-linha { font-size:calc(var(--s)*1.06); padding:calc(var(--s)*.44) 0; }
+#start-menu .rank-linha .pos { font-size:calc(var(--s)*.94); min-width:calc(var(--s)*2.1); }
+#start-menu .rank-linha .pts { font-size:calc(var(--s)*1.15); }
+/* som e acesso do operador: preferências de quem toca o stand, no tamanho de
+   rodapé — não competem com o botão. */
+#start-rodape { display:flex; justify-content:space-between; align-items:center;
+  gap:calc(var(--s)*1.2); margin-top:calc(var(--s)*1.3); }
+#start-rodape .lgpd { align-items:center; margin:0; padding:0; gap:calc(var(--s)*.7);
+  font-size:calc(var(--s)*.98); color:var(--ink-dim); }
+#start-rodape .lgpd input { width:calc(var(--s)*1.6); height:calc(var(--s)*1.6);
+  min-width:18px; min-height:18px; margin-top:0; }
+#start-rodape .adm-link { font-size:calc(var(--s)*.94); padding:calc(var(--s)*.6) 0; }
+/* entrada em cascata curta, só no carregamento: a tela se monta de cima pra
+   baixo como o terminal se monta no montador. */
+@keyframes start-sobe { from { opacity:0; transform:translateY(calc(var(--s)*.9)); } }
+#start-menu > *:not(.mq-tick) { animation:start-sobe .5s var(--ease) backwards; }
+#start-menu > *:nth-child(6) { animation-delay:.06s; }
+#start-menu > *:nth-child(7) { animation-delay:.12s; }
+#start-menu > *:nth-child(8) { animation-delay:.18s; }
+#start-menu > *:nth-child(n+9) { animation-delay:.24s; }
+/* tela estreita (celular): o menu desce pro rodapé e o degradê vira vertical —
+   a maquete continua visível por cima dele, que é o ponto. */
+@media (max-width:760px) {
+  #screen-start { align-items:flex-end; }
+  #screen-start::before { background:linear-gradient(0deg, #1a2028 0%, rgba(26,32,40,.86) 42%, transparent 88%); }
+  #start-menu { width:100%; margin-left:0; padding:calc(var(--s)*2); }
+  #start-menu .sub { max-width:none; }
+}
+/* janela baixa: a frase de apoio é o que o botão e o prêmio já dizem */
+@media (max-height:600px) { #start-menu .sub { display:none; } }
+@media (prefers-reduced-motion:reduce) { #start-menu > * { animation:none; } }
+
+/* ===== builder (montador) =====
+   O painel é uma gaveta que desliza da borda direita, sobre o terminal 3D.
+   Hoje o painel traz só configuração (modelo do caminhão — a duração saiu, a
+   partida é fixa em DURACAO_TURNO), o
+   briefing de pontuação, os chips ilustrativos de modal e o rodapé. A
+   interação de escolher módulo saiu: os 10 módulos ficam sempre ligados, e o
+   visor da maquete (à esquerda) virou uma JORNADA tocável — ver #jornada. */
+/* Os tokens de aço estão no :root (ver topo); aqui fica só a unidade da tela —
+   o visor da maquete (à esquerda) é o mesmo instrumento e mede tudo por ela. */
+#screen-builder { background:transparent; backdrop-filter:none; pointer-events:none; align-items:stretch; justify-content:flex-end; padding:0;
+  --u:clamp(8.5px, 1.11vh, 12.5px); }
+/* painel é uma gaveta: desliza da borda direita em vez do fade+scale genérico dos
+   outros overlays, reforçando que ele "abre" a partir do totem 3D ao fundo. */
+#builder-panel { pointer-events:auto; width:clamp(400px, 31vw, 560px); height:100%;
+  background:linear-gradient(180deg, rgba(41,50,63,.94), rgba(33,41,52,.95));
+  backdrop-filter:blur(8px); border-left:1px solid var(--steel-dim); display:flex; flex-direction:column;
+  padding:calc(var(--u)*1.3) calc(var(--u)*1.6) calc(var(--u)*.9);
+  overflow:hidden; opacity:1; transform:translateX(0); transition:transform var(--t-layout) var(--ease), opacity var(--t-layout); }
+#screen-builder.hidden #builder-panel { opacity:0; transform:translateX(3.5%); transition:transform var(--t-layout) var(--ease), opacity var(--t-layout); }
+#builder-head { flex:0 0 auto; padding-bottom:calc(var(--u)*1.5); }
+#builder-panel h1 { font-size:calc(var(--u)*2.15); letter-spacing:-.01em; color:#fff; }
+#builder-panel .sub { color:var(--ink-dim); font-size:calc(var(--u)*1.26); line-height:1.4;
+  margin:calc(var(--u)*.3) 0 0; max-width:96ch; }
+/* A escolha de duração saiu daqui: sobrou só o caminhão, e ele NÃO cresce pra
+   ocupar o vazio — vira um cartão desproporcional. A sobra desce inteira pra
+   seção de baixo (o que vale ponto), que é leitura e ganha com o espaço. */
+#builder-config { flex:0 0 auto; display:flex; flex-direction:column;
+  gap:calc(var(--u)*1.15); margin-top:calc(var(--u)*.7); }
+#builder-config .campo { display:flex; flex-direction:column; min-height:0; margin:0; }
+/* basis:auto, nao 0: o pai agora tem altura de conteudo (flex:0 0 auto), entao
+   nao ha espaco livre pra distribuir e um basis:0 aqui colapsaria o cartao do
+   caminhao pra altura zero. */
+#builder-config .campo-modelo { flex:0 0 auto; }
+#builder-config .opt-group { flex:1 1 auto; min-height:0; }
+#builder-config label { display:block; font:700 calc(var(--u)*.7)/1 var(--display); letter-spacing:.14em;
+  text-transform:uppercase; color:var(--ink-dim); margin-bottom:calc(var(--u)*.4); }
+.opt-group { display:flex; gap:calc(var(--u)*.5); }
+.opt-chip { display:flex; align-items:center; gap:calc(var(--u)*.5); font:700 calc(var(--u)*.85)/1 var(--display);
+  color:var(--ink-dim); background:var(--pnl); border:1.5px solid var(--steel-dim); border-radius:var(--r-pill);
+  padding:calc(var(--u)*.5) calc(var(--u)*.75); min-height:44px; cursor:pointer;
+  transition:border-color var(--t-estado), background var(--t-estado), color var(--t-estado); }
+.opt-chip:not(:disabled):active { transform:none; filter:none; }
+.opt-chip:focus-visible { outline:2px solid var(--ink); outline-offset:2px; }
+.opt-chip.on { color:#fff; border-color:var(--ink);
+  background:linear-gradient(180deg, rgba(250,9,78,.16), rgba(250,9,78,.03)), var(--pnl); }
+/* ===== o cartao dos dois caminhoes =====
+   O chip E a vitrine: dentro dele vai a arte real do veiculo. Eram duas
+   fileiras — o desenho esquematico (o MESMO svg nos dois chips) em cima e a
+   foto embaixo —, e a de cima so repetia a de baixo em pior resolucao. Sobrou
+   uma fileira, e quem seleciona continua sendo o radiogroup. O nao-escolhido
+   recua em opacidade e cinza, em vez de sumir, pra que os dois sejam
+   comparaveis de relance. */
+#grupo-modelo { display:grid; grid-template-columns:1fr; gap:calc(var(--u)*.5); }
+#grupo-modelo .opt-chip { flex-direction:column; align-items:center; justify-content:center;
+  gap:calc(var(--u)*.45); padding:calc(var(--u)*.7) calc(var(--u)*.8);
+  border-radius:var(--r-card); }
+/* a trava de tela baixa mora na LARGURA do cartao, nao na altura da imagem:
+   empilhada, a arte cresce com a largura do painel, e numa tela larga e curta a
+   fileira empurraria o rodape pra fora do #builder-panel, que e overflow:hidden.
+   Limitar a altura da <img> resolveria a altura mas deixaria a arte boiando com
+   vao dos dois lados (object-fit:contain letterboxa). Limitando o cartao, a
+   arte continua preenchendo ele inteiro — 4.8 e a proporcao 660x138 da imagem,
+   entao 9.5vh de altura util viram 45.6vh de largura maxima. */
+#grupo-modelo .opt-chip { width:100%; max-width:calc(9.5vh * 4.8); margin-inline:auto; }
+.opt-truck { width:100%; height:auto; display:block; opacity:.45; filter:grayscale(.65);
+  transition:opacity var(--t-estado), filter var(--t-estado); }
+.opt-chip.on .opt-truck { opacity:1; filter:none; }
+.opt-nm { font:700 calc(var(--u)*.92)/1 var(--display); letter-spacing:.1em; text-transform:uppercase;
+  color:var(--steel); transition:color var(--t-estado); }
+.opt-chip.on .opt-nm { color:var(--primary); }
+
+.sr-only { position:absolute; width:1px; height:1px; overflow:hidden; clip:rect(0 0 0 0); white-space:nowrap; }
+
+/* rótulo de seção do painel — o fio à direita separa um bloco do outro sem
+   gastar uma linha inteira de vão. */
+.sec-label { flex:0 0 auto; display:flex; align-items:center; gap:calc(var(--u)*.8);
+  font:700 calc(var(--u)*.82)/1 var(--display); letter-spacing:.14em; text-transform:uppercase; color:var(--steel);
+  margin-top:calc(var(--u)*2.8); }
+.sec-label::after { content:''; flex:1; height:1px; background:var(--steel-dim); }
+/* A assinatura fecha a régua: o menu é da AutoMind, e é o último bloco antes
+   do botão. `margin-top:auto` mora AQUI — é ela que empurra o pé da coluna. */
+#builder-marca { flex:0 0 auto; margin-top:auto; padding-top:calc(var(--u)*1.1);
+  display:flex; flex-direction:column; align-items:center; gap:calc(var(--u)*.5); }
+#builder-marca .bm-logo { display:block; width:calc(var(--u)*11); color:var(--steel); opacity:.85; }
+#builder-marca .bm-logo svg { width:100%; height:auto; display:block; }
+#builder-marca .bm-tag { font:700 calc(var(--u)*.74)/1 var(--display); letter-spacing:.22em;
+  text-transform:uppercase; color:var(--steel); }
+#builder-foot { flex:0 0 auto; display:flex; gap:calc(var(--u)*.85); margin-top:calc(var(--u)*1.2);
+  padding-top:calc(var(--u)*.9); border-top:1px solid var(--steel-dim); }
+/* ===== briefing de pontuação =====
+   Os mesmos três baldes que o placar final abre no fim do turno (ver
+   .stats-grid no fim de turno): quem lê aqui antes de jogar reconhece a conta depois. */
+/* flex-basis:auto (nao 0): a altura natural do texto e o PISO, e o grow so
+   soma a sobra por cima. Com basis:0 as tres linhas encolheriam junto e o
+   painel tem overflow:hidden — a descricao sumiria cortada em tela baixa. */
+/* NAO cresce. Com flex:1.8 este bloco engolia ~80% da sobra da coluna e as
+   tres linhas boiavam num vao alto — era esse o "desajustado". Agora TODOS os
+   cartoes do painel medem pelo conteudo (flex:0 1 auto — sem grow, com o
+   shrink preservado pra tela baixa nao estourar o overflow:hidden), e a sobra
+   inteira se junta num lugar so: o margin-top:auto da assinatura. */
+#briefing-pontos { flex:0 1 auto; display:flex; flex-direction:column;
+  gap:calc(var(--u)*1.3); margin-top:calc(var(--u)*1.15); }
+.bp-linha { display:flex; align-items:flex-start; gap:calc(var(--u)*1.05); min-width:0; }
+/* a caixa do ícone: o emoji era desenhado pela fonte e ocupava a linha inteira;
+   o ícone monoline tem tamanho próprio, então aqui só se centra a caixa e se
+   dá a cor — o traço herda currentColor, que é a regra do briefing. */
+.bp-ico { flex:0 0 auto; width:calc(var(--u)*3.8); height:calc(var(--u)*2.05); display:flex; align-items:center;
+  justify-content:center; color:var(--primary); }
+.bp-tx { min-width:0; }
+.bp-nm { display:block; font-weight:700; font-size:calc(var(--u)*1.64); line-height:1.25; color:var(--ink); }
+.bp-ds { display:block; font-size:calc(var(--u)*1.34); line-height:1.42; color:var(--ink-dim);
+  margin-top:calc(var(--u)*.3); }
+/* ===== valvula de escape pra janela baixa =====
+   Com os caminhoes empilhados e o respiro maior entre os topicos, o painel —
+   que e overflow:hidden — passa a precisar de altura. No totem (1080p) sobra;
+   numa janela de dev com ~640px o "Iniciar operacao" seria empurrado pra fora.
+   Quem sai primeiro e a assinatura, que e decoracao e mora justamente no vao
+   que o margin-top:auto abria. O que se toca nunca sai. */
+@media (max-height:820px) {
+  #builder-marca { display:none; }
+}
+#builder-foot button { min-height:calc(var(--u)*4.2); padding:calc(var(--u)*1) calc(var(--u)*1.5); }
+#builder-foot .btn-primary { flex:1; font-size:calc(var(--u)*1.35); letter-spacing:.01em; }
+/* ===== A JORNADA — a trilha de estações sob o palco =====
+   As oito etapas de STAGES_DEF, na ordem em que o caminhão as percorre. NÃO é
+   menu de seleção: o terminal do estande chega com o ecossistema inteiro
+   ligado, e cada estação já mostra o módulo que a cobre. O toque é uma LUNETA
+   — manda a câmera da maquete até a peça daquela etapa (focarMaquete).
+
+   O visor inteiro é pointer-events:none pro arraste alcançar o canvas e girar
+   a maquete; a trilha devolve o toque só pra ela. */
+/* a trilha tem unidade PRÓPRIA: --ju é o --u da tela vezes um fator, e todas
+   as medidas daqui penduram nele. Mexer no fator cresce o cartão inteiro em
+   proporção — tile, número, trilho e rótulos juntos — sem desencostar das
+   outras peças do visor, que continuam no --u. */
+/* O `--u` do app inteiro mede ALTURA de janela, e para a trilha isso não basta:
+   ela é uma grade de NOVE colunas, e a largura de cada uma vem da largura da
+   janela menos o painel da direita. Numa tela mais alta que larga (5:4, ou
+   1080p com o Windows em 125%, que dá 1536×864 de CSS) as duas medidas
+   divergem — o tipo continuava dimensionado pela altura enquanto a coluna
+   encolhia com a largura, e "Carregamento" passava por cima do cartão vizinho.
+   O segundo termo é essa mesma largura disponível; `min()` faz a trilha
+   obedecer ao que estiver mais apertado. Em 1920×1080 o termo de altura é o
+   menor, então o totem não muda. */
+#jornada { flex:0 0 auto; pointer-events:auto;
+  --ju:min(calc(var(--u)*1.32), calc((100vw - clamp(400px, 31vw, 560px)) * .0125)); }
+/* o titulo da trilha sobe junto com ela: .sec-label e global (serve tambem
+   "Seu caminhao" e "O que vale ponto"), entao a regra escopada aqui pendura SO
+   este rotulo no --ju e deixa os outros dois no --u. */
+#jornada .sec-label { font-size:calc(var(--ju)*.88); margin-top:calc(var(--u)*.35); }
+#jornada-lista { position:relative; display:grid; grid-auto-flow:column; grid-auto-columns:1fr;
+  gap:calc(var(--ju)*1.05); margin-top:calc(var(--ju)*.7); }
+/* o trilho passa POR TRÁS dos números, na altura do centro deles: a rota é
+   contínua, e é a linha que diz isso. */
+#jornada-lista::before { content:''; position:absolute; z-index:0;
+  left:calc(var(--ju)*2.1); right:calc(var(--ju)*2.1); top:calc(var(--ju)*1.8); height:2px;
+  background:linear-gradient(90deg, rgba(250,9,78,.8), rgba(250,9,78,.28)); }
+.jn-est { position:relative; z-index:1; display:flex; flex-direction:column; align-items:flex-start;
+  gap:calc(var(--ju)*.4); min-height:calc(var(--ju)*6.4); min-width:0;
+  padding:calc(var(--ju)*.7) calc(var(--ju)*.6); text-align:left;
+  background:var(--pnl); border:1.5px solid var(--steel-dim); border-radius:var(--r-card);
+  cursor:pointer; transition:border-color var(--t-estado), background var(--t-estado); }
+.jn-est:not(:disabled):active { transform:none; filter:none; border-color:var(--ink); }
+.jn-est:focus-visible { outline:2px solid var(--ink); outline-offset:2px; }
+.jn-n { flex:0 0 auto; display:flex; align-items:center; justify-content:center;
+  width:calc(var(--ju)*2.2); height:calc(var(--ju)*2.2); border-radius:0;
+  border:2px solid var(--steel); background:#232c38;
+  font:700 calc(var(--ju)*.86)/1 var(--display); letter-spacing:.02em; color:var(--ink-dim);
+  transition:border-color var(--t-estado), background var(--t-estado), color var(--t-estado); }
+.jn-nm { font-weight:700; font-size:calc(var(--ju)*1.18); line-height:1.15; color:var(--ink);
+  overflow:hidden; text-overflow:ellipsis; }
+.jn-mod { display:flex; align-items:center; gap:calc(var(--ju)*.4); margin-top:auto;
+  font:700 calc(var(--ju)*.78)/1.2 var(--display); letter-spacing:.06em; text-transform:uppercase;
+  color:var(--steel); min-width:0; }
+.jn-led { flex:0 0 auto; width:calc(var(--ju)*.44); height:calc(var(--ju)*.44); border-radius:0;
+  background:var(--primary); box-shadow:0 0 0 calc(var(--ju)*.16) rgba(250,9,78,.2); }
+/* Rede de segurança da trilha em tela menor que a do estande.
+   As colunas são `1fr`, e `1fr` tem piso de min-content: enquanto sobra
+   largura, é esse piso que garante "Carregamento" inteiro numa linha só. Numa
+   tela mais estreita os nove pisos somados passam do vão e a palavra escreve
+   por cima do cartão vizinho — foi o que 1280×1024 mostrou.
+
+   `anywhere` (e não `break-word`) é o único que também baixa o min-content, ou
+   seja, o único que desarma o piso. Justamente por isso ele fica FORA do
+   totem: aplicado sempre, ele igualaria as colunas em 1920 e quebraria
+   "Carregamen-to" numa tela onde a palavra cabe. `hyphens` põe a quebra num
+   ponto de sílaba (o <html> declara lang="pt-BR"), então mesmo apertado sai
+   "Carrega-mento" e não um corte no meio do encontro consonantal. */
+@media (max-width:1900px) {
+  .jn-nm, .jn-mod { overflow-wrap:anywhere; hyphens:auto; }
+}
+.jn-est.sel { border-color:var(--ink);
+  background:linear-gradient(180deg, rgba(250,9,78,.14), rgba(250,9,78,.03)), var(--pnl); }
+.jn-est.sel .jn-n { border-color:transparent; background:var(--primary); color:#fff; }
+.jn-est.sel .jn-mod { color:var(--primary); }
+
+#builder-foot .btn-ghost { flex:0 0 auto; min-width:calc(var(--u)*10); font-size:calc(var(--u)*1.15);
+  border-color:var(--steel-dim); color:var(--ink-dim); }
+/* ===== VISOR DA MAQUETE (coluna esquerda do montador) =====
+   A coluna à esquerda do painel era só o terreno passando atrás — o terminal 3D
+   girava em tela cheia e o painel cobria justamente a parte dele que interessa.
+   Agora ela é um VISOR: o render 3D é recortado (scissor) exatamente no
+   retângulo de #mq-scope, então a moldura desenhada aqui é a borda real da
+   imagem, não um enfeite por cima dela. Fora do recorte a tela é limpa em preto,
+   e é por isso que nada aqui pinta fundo.
+
+   O visor não é tocável (pointer-events:none): o arraste/pinça precisa alcançar
+   o canvas embaixo pra girar a maquete com o dedo. */
+#builder-visor { pointer-events:none; flex:1; min-width:0; display:flex; flex-direction:column;
+  justify-content:center; gap:calc(var(--u)*1.05); padding:calc(var(--u)*1.9) calc(var(--u)*2.2); }
+#mq-scope { flex:1 1 auto; position:relative; width:100%; min-height:calc(var(--u)*20);
+  border:1px solid var(--steel-dim); border-radius:var(--r-card); }
+/* cantos de mira: marcam o recorte do render sem fechar uma moldura pesada. */
+.mq-tick { position:absolute; width:calc(var(--u)*1.2); height:calc(var(--u)*1.2); border:0 solid var(--steel); }
+.mq-tick.tl { top:-1px; left:-1px; border-top-width:2px; border-left-width:2px; }
+.mq-tick.tr { top:-1px; right:-1px; border-top-width:2px; border-right-width:2px; }
+.mq-tick.bl { bottom:-1px; left:-1px; border-bottom-width:2px; border-left-width:2px; }
+.mq-tick.br { bottom:-1px; right:-1px; border-bottom-width:2px; border-right-width:2px; }
+/* onde a câmera está olhando agora — dentro do quadro, como legenda de câmera. */
+#mq-local { position:absolute; top:calc(var(--u)*.7); left:calc(var(--u)*.7);
+  font:700 calc(var(--u)*.78)/1 var(--display); letter-spacing:.14em; text-transform:uppercase; color:var(--ink-dim);
+  background:rgba(28,34,43,.76); border:1px solid var(--steel-dim); border-radius:var(--r-input);
+  padding:calc(var(--u)*.4) calc(var(--u)*.55); }
+#mq-cap { flex:0 0 auto; min-height:calc(var(--u)*5.4); }
+#mq-tit { font-weight:700; font-size:calc(var(--u)*1.35); line-height:1.2; color:var(--ink); }
+#mq-sub { font-size:calc(var(--u)*1.05); line-height:1.4; color:var(--ink-dim); margin-top:calc(var(--u)*.4); }
+/* âmbar tem UM significado na tela inteira: isto voltou a ser feito por uma
+   pessoa. Apagar uma etapa aqui é a mesma frase que o rodapé do cartão mostra. */
+#mq-cap.off #mq-sub { color:var(--warn); }
+#mq-cap.troca { animation:mqEntra .42s var(--ease); }
+@keyframes mqEntra { from { opacity:0; transform:translateY(calc(var(--u)*.6)); } to { opacity:1; transform:none; } }
+
+/* Fora do totem 1920×1080: abaixo de ~1180px o painel já ocupa a tela toda, e
+   não sobra coluna pro visor. */
+@media (max-width:1180px) {
+  #builder-panel { width:min(94vw, 720px); }
+  /* nesta largura o painel já ocupa a tela toda: não sobra coluna pro visor, e o
+     terminal volta a girar em tela cheia atrás (ver renderMaquete). */
+  #builder-visor { display:none; }
+}
+@media (prefers-reduced-motion:reduce) {
+  #mq-cap.troca { animation:none !important; }
+  /* os cartões do placar final são desenhados no estado FINAL e animados só com
+     `from`, como as cenas do console: sem animação eles já aparecem resolvidos,
+     com os números no lugar — que é justamente o que se quer ver aqui. */
+  .overlay, .overlay-card, .jornada-card, #builder-panel, .ganho-badge, .pl-met,
+  .overlay.hidden, .overlay.hidden .overlay-card, .overlay.hidden .jornada-card,
+  #screen-builder.hidden #builder-panel {
+    transition-duration:1ms !important; animation-duration:1ms !important; animation-delay:0s !important;
+  }
+}
+
+/* ===== simulação =====
+   O HUD era o único lugar do arquivo ainda escrito em px cravado: rótulo de
+   KPI em 10px, tag em pílula, badge "VS" flutuando. Num totem de 55" visto a
+   três metros, 10px é ilegível — e o painel de KPI é justamente o que prova o
+   argumento do jogo enquanto ele acontece. Agora o HUD mede tudo por `--h`,
+   a unidade da tela (mesma ideia do `--u` do montador e do `--l` da captação),
+   e fala a língua de instrumento do resto: rótulo em mono, valor tabular.
+
+   `--hud-topo` é a altura da faixa de cima, e é dela que TUDO abaixo pendura
+   (cabeçalhos de lado, gerencial, ticker) — antes eram quatro valores de topo
+   escritos à mão que não se conheciam. */
+#sim-ui { position:fixed; inset:0; z-index:60; pointer-events:none; display:none;
+  --h:clamp(9px, 1.2vh, 14px); --hud-topo:calc(var(--h)*4.9); }
+#sim-ui.ativo { display:block; }
+#sim-topo { position:absolute; top:0; left:0; right:0; height:var(--hud-topo);
+  display:flex; align-items:center; justify-content:center; gap:calc(var(--h)*1.5);
+  padding:0 calc(var(--h)*1.4); background:rgba(28,34,43,.86);
+  border-bottom:1px solid var(--steel-dim); }
+/* o relógio é o instrumento central do turno: rótulo em cima, número embaixo,
+   como qualquer mostrador — em vez do número solto que ele era. */
+.hud-leitura { display:flex; flex-direction:column; align-items:center; gap:calc(var(--h)*.18); }
+.hud-leitura.hidden { display:none; }
+.hud-leitura .l { font:700 calc(var(--h)*.72)/1 var(--display); letter-spacing:.18em;
+  text-transform:uppercase; color:var(--steel); }
+#sim-timer { font:800 calc(var(--h)*2.35)/1 var(--display); color:var(--warn); font-variant-numeric:tabular-nums;
+  letter-spacing:.02em; }
+#sim-timer.acabando { color:var(--err); animation:pulse 1.3s infinite; }
+#sim-pontos-box { position:absolute; right:calc(var(--h)*1.4); align-items:flex-end; }
+#sim-pontos { font:800 calc(var(--h)*1.6)/1 var(--display); color:var(--primary); font-variant-numeric:tabular-nums; }
+
+/* ===== o placar de cada lado, como painel de fliperama =====
+   Era uma pílula deitada ("Pontos 40") pendurada sob o rótulo do lado: legível,
+   mas passiva. Num estande a pessoa está olhando o PÁTIO, que é onde a ação
+   acontece, e o crédito trocava entre dois quadros sem que ninguém visse.
+
+   Agora é um instrumento de quatro camadas — marquise, cabeçalho, mostrador,
+   legenda — que ANUNCIA cada ponto: o dígito sobe contando, um "+N" verde
+   flutua e o mostrador dá um flash na cor do lado. É a mesma gramática de
+   fliperama do resto do estande (canto vivo, tipo de display em caixa alta,
+   número tabular), só que finalmente com o peso de uma peça.
+
+   O painel tem LARGURA FIXA, e não `max-content`: numa tela de versus os dois
+   lados desencontrados leem como defeito, e o cabeçalho do manual é uma linha
+   de texto enquanto o do AutoLoad é a logo — sozinhos, nunca dariam a mesma
+   medida. `--h2` (30% acima de --h, só aqui) continua sendo a unidade do lado,
+   pra ele pesar mais que o relógio sem inflar o resto do HUD. */
+.side-board { position:absolute; top:calc(var(--hud-topo) + var(--h)*.9);
+  --h2:calc(var(--h) * 1.3); width:calc(var(--h2)*14); box-sizing:border-box;
+  padding:calc(var(--h2)*.75) calc(var(--h2)*1.1) calc(var(--h2)*.95);
+  background:linear-gradient(180deg, var(--card), var(--bg));
+  border:1px solid var(--steel-dim);
+  /* o fio de acento saiu das laterais e subiu pro topo: é ele que faz o painel
+     ler como gabinete de máquina, e é a única peça horizontal que os dois lados
+     têm em comum — quem olha de longe vê duas máquinas, não dois textos. */
+  border-top:3px solid var(--ac);
+  box-shadow:0 calc(var(--h2)*1.2) calc(var(--h2)*2.4) rgba(0,0,0,.55); }
+/* vermelho de alarme no manual, rosa da marca no AutoLoad: as mesmas duas cores
+   de sempre, agora declaradas uma vez e herdadas por tudo dentro do painel. */
+#head-man { left:1.4%; --ac:var(--err); --ac-glow:rgba(239,68,68,.55); }
+#head-auto { right:1.4%; --ac:var(--primary); --ac-glow:rgba(250,9,78,.55); }
+
+/* A marquise. Quadradas, não redondas: o sistema é de canto vivo em tudo —
+   os LEDs do montador também eram círculos e deixaram de ser. O piscar é
+   dessincronizado de propósito (três atrasos diferentes); em fase, sete
+   lâmpadas acendendo juntas viram um alarme, e alarme aqui já tem dono. */
+.sb-lights { display:flex; justify-content:space-between; margin-bottom:calc(var(--h2)*.7); }
+.sb-lights span { width:calc(var(--h2)*.4); height:calc(var(--h2)*.4);
+  background:var(--warn); box-shadow:0 0 calc(var(--h2)*.5) rgba(245,166,35,.55);
+  animation:sb-pisca 2.6s ease-in-out infinite; }
+.sb-lights span:nth-child(odd) { animation-delay:.4s; }
+.sb-lights span:nth-child(3n) { animation-delay:.9s; }
+@keyframes sb-pisca { 0%,100%{ opacity:.3; } 50%{ opacity:1; } }
+
+/* O cabeçalho diz de quem é a máquina. `min-height` é a altura que a logo já
+   impunha do lado do AutoLoad, agora escrita para o lado manual copiar: sem
+   ela, um mostrador nascia ~20px abaixo do outro. */
+.sb-head { display:flex; align-items:center; gap:calc(var(--h2)*.6);
+  min-height:calc(var(--h2)*2.2); margin-bottom:calc(var(--h2)*.75); }
+/* o Icone nasce com tamanho fixo em px (a escala 16/20/24/32/40 do briefing) e
+   o painel escala em --h2 — o svg é reamarrado à unidade do lado pra ele não
+   ficar grande demais numa tela baixa. */
+.sb-ico { color:var(--ac); display:flex; flex:none; }
+.sb-ico svg { width:calc(var(--h2)*1.35); height:calc(var(--h2)*1.35); }
+.sb-lab { font:800 calc(var(--h2)*.8)/1 var(--display); letter-spacing:.14em;
+  text-transform:uppercase; color:var(--ink); }
+.sb-logo { height:calc(var(--h2)*2.2); width:calc(var(--h2)*2.2 * 1920 / 592); display:block;
+  color:#fff; filter:drop-shadow(0 0 calc(var(--h2)*.7) var(--ac)); }
+.sb-logo svg { width:100%; height:100%; display:block; }
+
+/* O mostrador é preto DE VERDADE, e não mais um cartão translúcido: é o que faz
+   o número existir quando um caminhão branco ou a cobertura passa por baixo — o
+   defeito que derrubou a versão anterior deste placar. */
+.sb-display { position:relative; display:flex; align-items:center; justify-content:center;
+  padding:calc(var(--h2)*.85) 0 calc(var(--h2)*.6); background:#000;
+  box-shadow:inset 0 0 0 1px rgba(255,255,255,.07), inset 0 calc(var(--h2)*.6) calc(var(--h2)*1.4) rgba(0,0,0,.8); }
+.sb-stack { position:relative; line-height:1; display:block; }
+/* o truque do display de sete segmentos: os dígitos apagados ficam atrás,
+   dando fundo ao valor E fixando a largura — assim o painel não respira quando
+   o placar passa de 99 pra 100. */
+.sb-fantasma, .sb-n { font:800 calc(var(--h2)*2.9)/1 var(--display);
+  font-variant-numeric:tabular-nums; letter-spacing:.08em; display:block; }
+.sb-fantasma { color:rgba(255,255,255,.07); }
+.sb-n { position:absolute; top:0; left:0; color:var(--ac);
+  text-shadow:0 0 calc(var(--h2)*.4) var(--ac), 0 0 calc(var(--h2)*1.3) var(--ac-glow); }
+/* No pico do golpe o dígito vira BRANCO. Não é enfeite: o flash logo abaixo
+   lava o mostrador na cor do lado, e um dígito da mesma cor sumia dentro dele
+   por meio segundo — justo no quadro em que o placar mais quer ser lido.
+   Branco é a única cor que atravessa tanto o vermelho quanto o rosa. */
+.sb-n.bate { animation:sb-bate .5s ease-out; }
+@keyframes sb-bate {
+  0%{ transform:scale(1); }
+  30%{ transform:scale(1.12); color:#fff; text-shadow:0 0 calc(var(--h2)*.5) #fff, 0 0 calc(var(--h2)*1.6) var(--ac); }
+  100%{ transform:scale(1); }
+}
+
+/* O flash é o "recebido" do mostrador — meio quadro na cor do lado, e some.
+   Fica em terço de opacidade: chapado, ele não pisca o mostrador, apaga o
+   mostrador. */
+.sb-flash { position:absolute; inset:0; background:var(--ac); opacity:0;
+  pointer-events:none; animation:sb-flash .5s ease-out; }
+@keyframes sb-flash { 0%{ opacity:.34; } 100%{ opacity:0; } }
+
+/* O "+N" que sobe a cada tarefa concluída. VERDE, e é o único verde do HUD:
+   vermelho já é o alarme do manual e rosa é a marca, então ganho precisava de
+   uma terceira voz — e verde é a que todo mundo lê como "entrou" sem legenda.
+   Sai por cima do mostrador, não empurra nada: é aviso, não conteúdo. */
+.sb-ganho { position:absolute; top:calc(var(--h2)*.35); right:calc(var(--h2)*.7);
+  font:800 calc(var(--h2)*1.05)/1 var(--display); color:var(--ok);
+  text-shadow:0 0 calc(var(--h2)*.55) rgba(46,204,113,.85); opacity:0;
+  pointer-events:none; animation:sb-sobe 1s ease-out forwards; }
+@keyframes sb-sobe {
+  0%{ opacity:0; transform:translateY(calc(var(--h2)*.45)); }
+  20%{ opacity:1; }
+  100%{ opacity:0; transform:translateY(calc(var(--h2)*-1.7)); }
+}
+
+/* "Pontos" desce pra cá e SAI do topo (que é "Total", a soma dos dois lados):
+   é essa palavra que diz que os dois painéis e o topo são a mesma moeda. */
+.sb-cap { margin-top:calc(var(--h2)*.6); text-align:center;
+  font:700 calc(var(--h2)*.66)/1 var(--display); letter-spacing:.3em;
+  text-transform:uppercase; color:var(--steel); }
+
+/* Quem pede menos movimento fica com o painel — moldura, mostrador preto,
+   dígito aceso — e sem nada piscando: o placar continua legível, e o crédito
+   ainda aparece no "+N", parado, em vez de subir. */
+@media (prefers-reduced-motion:reduce) {
+  .sb-lights span { animation:none; opacity:.75; }
+  .sb-n.bate { animation:none; }
+  .sb-flash { animation:none; }
+  .sb-ganho { animation:sb-espia 1s steps(1,end) forwards; }
+  @keyframes sb-espia { 0%,80%{ opacity:1; } 100%{ opacity:0; } }
+}
+
+.combo-cont { display:none; font:800 10.5px var(--display); letter-spacing:.5px;
+  color:#ffb020; margin-top:4px; }
+.combo-cont.mostrar { display:block; }
+.combo-cont.ativo { color:#ffd166; text-shadow:0 0 8px rgba(255,176,32,.6); }
+
+/* a costura entre os dois lados: um fio só, com o rótulo montado nele. O badge
+   "VS" era uma peça solta pairando sobre a divisa; agora ele É a divisa.
+   Degradê na cor da marca (rosa → roxo) em vez do fio neutro de aço, pra deixar
+   nítido — mesmo de longe, na TV touch do estande — onde termina o manual e
+   começa o AutoLoad. Só as pontas (perto do chão e perto do HUD) esmaecem. */
+/* A costura entre as duas cenas cai em `Math.floor(W/2)` — x=960 numa tela de
+   1920 (ver SimScreen). O `translateX(-50%)` põe o traço EM CIMA dela: sem
+   isso ele nascia na costura e crescia só para a direita, e a metade
+   automatizada ficava com uma tira a mais do que a manual. Com 2px isso não
+   se via; com 4px, sim.
+
+   Ele é a única coisa que diz "são duas operações, não uma tela larga", e a
+   4,9% de altura de HUD ele corre a tela toda — por isso o degradê agora abre
+   e fecha rápido (7%/90%) em vez dos 18%/85% de antes: a transparência das
+   pontas existe para não bater de topo no HUD, não para apagar o meio. */
+#divisor { position:absolute; top:var(--hud-topo); bottom:0; left:50%; width:4px; transform:translateX(-50%);
+  background:linear-gradient(180deg, rgba(250,9,78,0) 0%, var(--primary) 7%, #8e44ad 52%, var(--primary) 90%, rgba(250,9,78,0) 100%);
+  box-shadow:0 0 20px 3px rgba(250,9,78,.6), 0 0 38px 10px rgba(142,68,173,.34);
+  opacity:1; }
+/* O selo do VS é o fecho do traço, e passa a ter porte de peça: era 42x23,
+   menor que o próprio rótulo "MOTORISTA" da ficha ao lado, e a ficha ainda o
+   cobria por 7px. Ganhou tipo e respiro, e veste o MESMO fundo e a mesma borda
+   da ficha — os dois são a moldura do topo, e agora se leem como um par em vez
+   de dois achados. O `top` é idêntico ao dela de propósito: alinhados pelo
+   topo, o olho lê uma linha só. */
+#vs-badge { position:absolute; top:calc(var(--hud-topo) + var(--h)*.9); left:50%; transform:translateX(-50%);
+  background:rgba(16,20,26,.94); border:1.5px solid var(--steel); color:var(--ink);
+  font:800 calc(var(--h)*1.3)/1 var(--display); letter-spacing:.22em; text-indent:.22em;
+  padding:calc(var(--h)*.7) calc(var(--h)*1.4); border-radius:var(--r-pill); }
+
+/* alertas lado manual (interativos) */
+/* column-reverse: o alerta novo entra embaixo, junto do polegar. Com as missões
+   segurando o caminhão até alguém resolver (ver travarAlerta), a pilha pode
+   chegar a um cartão por caminhão + modais/imprevistos — daí o teto de altura e
+   a rolagem, senão a pilha sobe por cima dos KPIs e sai da tela.
+
+   A pilha ocupava 430px de largura por 66% da altura da metade manual (960px na
+   TV): com dois ou três caminhões travados ela cobria o pátio inteiro, e o
+   visitante deixava de VER a consequência do que estava resolvendo — que é o
+   ponto do lado manual. O cartão encolheu por três lados (coluna mais estreita,
+   teto de altura menor, moldura e tipografia mais apertadas) sem mexer no
+   tamanho do que se toca: os controles das missões continuam com alvo de 36px,
+   o piso do toque confortável no totem.
+
+   Encolher a moldura, porém, não resolvia o que de fato tapa o terminal: são N
+   cartões abertos ao mesmo tempo. Quem opera tem UM par de mãos e faz UMA
+   missão por vez — então só a missão em atendimento fica aberta, e os outros
+   caminhões viram uma linha cada na fila logo acima (ver arrumarPilhaMissoes).
+   A linha continua sendo um alvo de 36px que abre a missão no toque, e a
+   missão aberta fica embaixo, junto do polegar (order:-1 na coluna invertida).
+   Três caminhões travados saíram de ~700px de cartão para ~300px de fila. */
+#alertas-man { position:absolute; left:1.2%; bottom:14px; width:26%; max-width:348px; display:flex;
+  flex-direction:column-reverse; gap:7px; pointer-events:auto;
+  /* 38% de uma janela baixa (ou o preview de uma IDE, bem mais baixo que a TV
+     do totem) fica menor que o cartão mais alto (a lista de placas, até 5
+     opções, ~266px) — o max() garante essa altura mesmo quando a % não dá. */
+  max-height:max(45%, 416px); overflow-y:auto; overscroll-behavior:contain; scrollbar-width:thin; }
+.alerta { position:relative; background:rgba(24,16,16,.94); border:1.5px solid var(--err); border-radius:var(--r-card); padding:9px 12px;
+  cursor:pointer; touch-action:manipulation; animation:slideUp .33s ease-out; }
+.alerta .cab { display:flex; align-items:center; gap:8px; font-size:15.5px; font-weight:800;
+  color:#ff8a8a; line-height:1.2; }
+.alerta .cab .ico { font-size:18px; flex:none; }
+/* descrição da etapa (st.alerta.acao). Mora FORA de .acao de propósito: aquele
+   div é o alvo que todo montarMissaoX sobrescreve com o widget da missão. */
+.alerta .desc { font-size:13.5px; color:var(--muted); line-height:1.25; margin-top:3px; }
+.alerta .acao { font-size:14px; color:var(--warn); margin-top:3px; }
+.alerta .barra { height:4px; background:#3a2222; border-radius:var(--r-pill); margin-top:5px; overflow:hidden; }
+.alerta .barra>div { height:100%; background:var(--err); width:100%; transition:width .2s linear; }
+.alerta.critico { animation:pulseAlarme .78s infinite; }
+.alerta.alerta-pressao { border-color:#ffb020; box-shadow:0 0 0 2px #ffb02055; }
+/* prazo vencido: o caminhão não anda mais sozinho — fica parado na etapa até a
+   missão ser executada (ver travarAlerta) */
+.alerta.travado { border-color:var(--err); border-width:2px; background:rgba(44,12,12,.96); }
+.alerta .parado { margin-top:5px; font-size:13px; font-weight:800; letter-spacing:.3px;
+  color:var(--err); text-transform:uppercase; }
+@media (prefers-reduced-motion:reduce){ .alerta.critico{ animation:none; box-shadow:0 0 0 3px rgba(239,68,68,.35); } }
+
+/* fila recolhida: um caminhão por linha — placa, etapa onde parou e há quanto
+   tempo. É o mesmo cartão, só sem a missão à mostra; toque abre (spawnAlerta).
+   A linha inteira é o alvo, com o piso de 36px do toque no totem. */
+.alerta.recolhida { display:flex; align-items:center; min-height:47px; padding:5px 12px; overflow:hidden;
+  background:rgba(20,13,13,.9); border-width:1.5px; border-left-width:4px; }
+.alerta.recolhida .cab, .alerta.recolhida .desc,
+.alerta.recolhida .acao, .alerta.recolhida .parado { display:none; }
+.alerta.recolhida .alerta-mini { display:flex; }
+/* o que sobra da contagem: um fio de 2px na base da linha, que é a informação
+   que ainda importa recolhida — este aqui está prestes a estourar */
+.alerta.recolhida .barra { position:absolute; left:0; right:0; bottom:0; height:2px; margin:0; border-radius:0; }
+/* a pilha inteira pulsando vira ruído e some com o pátio atrás: recolhida, o
+   crítico se anuncia pela borda e pelo contador, não por alarme piscando */
+.alerta.recolhida.critico { animation:slideUp .33s ease-out; box-shadow:none; }
+@media (prefers-reduced-motion:reduce){ .alerta.recolhida.critico{ animation:none; box-shadow:none; } }
+.alerta-mini { display:none; align-items:center; gap:9px; width:100%; font-size:15px; line-height:1.1; }
+.alerta-mini .m-ico { font-size:17px; flex:none; }
+.alerta-mini .m-placa { font-family:Consolas,monospace; font-weight:800; letter-spacing:.9px; color:var(--fg); flex:none; }
+.alerta-mini .m-etapa { font-size:12.5px; font-weight:700; letter-spacing:.6px; text-transform:uppercase;
+  color:var(--muted); overflow:hidden; text-overflow:ellipsis; white-space:nowrap; }
+.alerta-mini .m-t { margin-left:auto; padding-left:8px; font-size:14px; font-weight:800;
+  font-variant-numeric:tabular-nums; color:var(--warn); flex:none; }
+.alerta.travado .m-t { color:var(--err); }
+@keyframes slideUp { from{opacity:0; transform:translateY(14px);} to{opacity:1; transform:none;} }
+@keyframes pulseAlarme { 50%{ box-shadow:0 0 0 4px rgba(239,68,68,.35); } }
+@keyframes pulse { 50%{opacity:.4;} }
+
+/* ficha do motorista do caminhão em atendimento (ver atualizarMissaoCanto), no
+   canto superior direito da metade manual. Não é alarme e não se toca: é o
+   "quem está na minha frente" que o operador do balcão teria no papel — o que
+   fazer continua sendo dito pelo cartão da missão lá embaixo (#alertas-man). */
+/* O `right` mede a partir do CENTRO, que é onde mora o selo do VS. Com
+   `var(--h)*1.1` a ficha encostava nele — media 7px de sobreposição em
+   1920x1080, e o "V" ficava escondido debaixo da ficha. O afastamento agora é
+   folgado o bastante para o selo crescido: a conta é meia-largura do selo mais
+   um vão que se enxergue. */
+#missao-canto { position:absolute; top:calc(var(--hud-topo) + var(--h)*.9);
+  right:calc(50% + var(--h)*4.6); width:min(30%, 300px);
+  background:rgba(16,20,26,.94); border:1.5px solid var(--steel); border-left-width:3px;
+  border-radius:var(--r-card); padding:calc(var(--h)*.55) calc(var(--h)*1.1); pointer-events:none; }
+#missao-canto .mc-eyebrow { font:800 calc(var(--h)*.72)/1 var(--display); letter-spacing:.18em;
+  text-transform:uppercase; color:var(--steel); margin-bottom:calc(var(--h)*.35); }
+/* a placa é a MANCHETE da ficha: é ela que liga o nome ao caminhão do cartão de
+   missão e ao que está passando no pátio atrás — o nome sozinho não amarra em
+   nada. Tabular porque a placa troca a cada caminhão e a linha não pode dançar. */
+#missao-canto .mc-placa { font:800 calc(var(--h)*1.7)/1.05 var(--display); letter-spacing:.08em;
+  font-variant-numeric:tabular-nums; color:var(--ink); }
+#missao-canto .mc-nome { font-size:14px; font-weight:800; color:var(--fg); line-height:1.25; }
+#missao-canto .mc-placa + .mc-nome { margin-top:calc(var(--h)*.3); font-weight:700; }
+#missao-canto .mc-dados { display:grid; grid-template-columns:auto 1fr; gap:1px 8px;
+  font-size:11.5px; margin-top:5px; }
+#missao-canto .mc-dados b { font-weight:700; letter-spacing:.06em; text-transform:uppercase;
+  font-size:9.5px; color:var(--muted); align-self:center; }
+#missao-canto .mc-dados span { font-family:var(--display); font-weight:700; letter-spacing:.5px; color:var(--fg); }
+#missao-canto.vazio { border-style:dashed; border-left-style:solid; }
+#missao-canto.vazio .mc-nome { color:var(--muted); font-weight:600; font-size:12px; }
+#missao-canto.pop .mc-nome { animation:mcPop .38s ease-out; }
+@keyframes mcPop { from{opacity:0; transform:translateY(-9px) scale(.94);} to{opacity:1; transform:none;} }
+@media (prefers-reduced-motion:reduce){
+  #missao-canto.pop .mc-nome{ animation:none; }
+}
+
+/* missões do lado manual: só gestos de toque/segurar/arrastar — nada de digitar
+   (roda em totem horizontal na feira, sem teclado físico e sem acessibilidade
+   pra teclado virtual em tela) */
+/* Altura: as nove missões têm de um botão só (carimbo) a cinco placas na lista,
+   e a pilha ficava com cartões de tamanhos muito diferentes lado a lado. Os
+   controles usam uma medida única (--missao-alvo) e o cartão tem um piso, pra
+   pilha ficar uniforme sem esticar a missão mais longa. O alvo é 36px — o piso
+   do toque confortável no totem, e o limite de quanto o cartão pode encolher
+   sem virar um problema de acerto do dedo: o resto do aperto veio da moldura
+   (padding, tipografia, respiros), não do que se toca. */
+.alerta-missao { cursor:default; --missao-alvo:47px; min-height:120px; }
+.missao-hold { position:relative; overflow:hidden; width:100%; margin-top:4px; border:none; border-radius:var(--r-input);
+  padding:8px 12px; min-height:var(--missao-alvo,47px); font-size:15px; font-weight:800; color:#fff; background:#2a2a2a; text-align:center;
+  touch-action:manipulation; }
+.missao-hold .hold-fill { position:absolute; inset:0; width:0; background:var(--primary); transition:width var(--hold-ms,1100ms) linear; }
+.missao-hold.segurando .hold-fill { width:100%; }
+.missao-hold .hold-txt { position:relative; z-index:1; }
+@media (prefers-reduced-motion:reduce){ .missao-hold .hold-fill{ transition-duration:1ms; } }
+
+/* pátio: segurar com barra de progresso separada do botão */
+.missao-hold2 { width:100%; margin-top:5px; border:none; border-radius:var(--r-input); padding:8px 12px;
+  min-height:var(--missao-alvo,47px); font-size:15px; font-weight:800; color:#fff; background:#2a2a2a; touch-action:manipulation; }
+.missao-barra { position:relative; height:9px; background:#2a2a2a; border-radius:var(--r-pill); margin-top:5px; overflow:hidden; }
+.missao-barra-fill { position:absolute; inset:0; width:0; background:var(--primary); transition:width var(--hold-ms,1400ms) linear; }
+.missao-hold2.segurando + .missao-barra .missao-barra-fill { width:100%; }
+@media (prefers-reduced-motion:reduce){ .missao-barra-fill{ transition-duration:1ms !important; } }
+
+/* vistoria / carga: checklist de itens de segurança */
+.missao-chk { display:flex; align-items:center; gap:9px; width:100%; text-align:left; border:1.5px solid var(--border);
+  background:var(--card2); border-radius:var(--r-input); padding:7px 12px; font-size:15px; font-weight:700; color:var(--fg);
+  margin-top:5px; min-height:var(--missao-alvo,47px); touch-action:manipulation; transition:border-color var(--t-estado), background var(--t-estado); }
+.missao-chk .ico { width:19.5px; text-align:center; font-weight:800; color:var(--muted); }
+.missao-chk.ok { border-color:var(--ok); background:rgba(46,204,113,.1); }
+.missao-chk.ok .ico { color:var(--ok); }
+
+/* pesagem final: arrastar até o fim */
+.missao-slider { position:relative; margin-top:6px; height:var(--missao-alvo,47px); background:#2a2a2a; border-radius:var(--r-pill); overflow:hidden; touch-action:none; }
+.missao-slider-fill { position:absolute; inset:0; width:0; background:rgba(250,9,78,.28); }
+.missao-slider-thumb { position:absolute; top:4px; left:0; width:39px; height:39px; border-radius:0;
+  background:var(--primary); color:#fff; display:flex; align-items:center; justify-content:center; font-size:18px;
+  cursor:grab; touch-action:none; }
+.missao-slider-txt { position:absolute; inset:0; display:flex; align-items:center; justify-content:center;
+  font-size:14px; color:var(--muted); font-weight:700; pointer-events:none; }
+
+/* check-out: emitir NF-e precisa de confirmação dupla */
+.missao-btn2x { width:100%; margin-top:5px; border:none; border-radius:var(--r-input); padding:8px 12px;
+  min-height:var(--missao-alvo,47px); font-size:15px; font-weight:800; color:#fff;
+  background:var(--brand-gradient) no-repeat; touch-action:manipulation; }
+.missao-btn2x.armado { background:var(--warn); color:#241a00; animation:pulseArmado .65s infinite; }
+@keyframes pulseArmado { 50%{ opacity:.72; } }
+
+/* check-in: escolher a placa certa numa lista (conferência manual da portaria) */
+.missao-placa-hint { font-size:13.5px; color:var(--muted); margin-top:2px; line-height:1.25; }
+.missao-placas { display:flex; flex-direction:column; gap:5px; margin-top:5px; }
+.missao-placa-opt { width:100%; border:1.5px solid var(--border); background:var(--card2); color:var(--fg);
+  border-radius:var(--r-input); padding:7px 12px; font-size:15.5px; font-weight:800; font-family:Consolas,monospace;
+  letter-spacing:1.4px; text-align:center; min-height:var(--missao-alvo,47px); touch-action:manipulation;
+  transition:border-color var(--t-estado), background var(--t-estado), opacity var(--t-estado); }
+.missao-placa-opt:active { transform:scale(.97); }
+.missao-placa-opt.errada { opacity:.35; border-color:var(--err); text-decoration:line-through; animation:shakePlaca .39s; }
+.missao-placa-opt.sacode { border-color:var(--err); animation:shakePlaca .39s; }
+@keyframes shakePlaca { 20%,60%{transform:translateX(-5px)} 40%,80%{transform:translateX(5px)} }
+
+/* saída: carimbar — duas batidas em ritmo (entinta, depois bate) */
+.missao-carimbo { width:100%; margin-top:5px; border:none; border-radius:var(--r-input); padding:8px 12px;
+  min-height:var(--missao-alvo,47px); font-size:15px; font-weight:800; color:#fff; background:#2a2a2a; touch-action:manipulation; }
+.missao-carimbo:active { transform:scale(.96); }
+.missao-carimbo.pronta { background:var(--warn); color:#241a00; animation:pulseArmado .65s infinite; }
+
+/* pátio: segurar com estática no rádio — barra controlada via rAF, sofre recuos aleatórios */
+.missao-barra.instavel .missao-barra-fill { transition:none; }
+.missao-barra.instavel.crepitando { animation:staticFlicker .16s steps(2) infinite; }
+@keyframes staticFlicker { 50%{ opacity:.4; } }
+
+/* carga: contador de compartimentos — toque repetido num único alvo, sem toggle */
+.missao-contador { width:100%; margin-top:5px; border:none; border-radius:var(--r-input); padding:8px 12px;
+  min-height:var(--missao-alvo,47px); font-size:15px; font-weight:800; color:#fff; background:#2a2a2a; touch-action:manipulation; }
+.missao-contador:active { transform:scale(.96); }
+.missao-contador-dots { display:flex; gap:6px; justify-content:center; margin-top:6px; }
+.missao-contador-dots span { width:10px; height:10px; border-radius:0; background:#3a3a3a; border:1.5px solid var(--border); }
+.missao-contador-dots span.on { background:var(--primary); border-color:transparent; }
+/* visor de instrumento (balança, rádio) e linhas de conferência de papel —
+   monoespaçado de propósito: é o que o operador lê do display e copia à mão */
+.missao-visor { font-family:ui-monospace,'Cascadia Mono',Consolas,monospace; font-size:19px; font-weight:700;
+  letter-spacing:1.2px; text-align:center; color:#a8f5d1; background:#1d3629; border:1.5px solid #366353;
+  border-radius:var(--r-input); padding:5px 8px; margin-top:5px; }
+.missao-visor small { display:block; font-size:11.5px; letter-spacing:1.2px; color:#4f7b66; font-weight:800;
+  text-transform:uppercase; margin-bottom:1px; }
+.missao-cotejo { margin-top:5px; border:1px solid var(--border); border-radius:var(--r-input); overflow:hidden; }
+.missao-cotejo div { display:flex; gap:10px; padding:4px 10px; font-size:14px; }
+.missao-cotejo div + div { border-top:1px solid var(--border); }
+.missao-cotejo span { color:var(--muted); min-width:83px; }
+.missao-cotejo b { font-family:ui-monospace,'Cascadia Mono',Consolas,monospace; letter-spacing:1px; }
+.missao-dupla { display:flex; gap:6px; margin-top:5px; }
+.missao-dupla .missao-placa-opt { margin:0; }
+.missao-passo { display:flex; align-items:center; gap:9px; width:100%; text-align:left; border:1.5px solid var(--border);
+  background:var(--card2); color:var(--muted); border-radius:var(--r-input); padding:7px 12px; font-size:15px;
+  margin-top:5px; min-height:var(--missao-alvo,47px); touch-action:manipulation; }
+.missao-passo .n { width:21px; height:21px; flex-shrink:0; border-radius:0; border:1.5px solid var(--border);
+  font-size:13px; font-weight:800; display:flex; align-items:center; justify-content:center; }
+.missao-passo.vez { color:var(--fg); border-color:var(--warn); background:rgba(245,166,35,.1); }
+.missao-passo.vez .n { border-color:var(--warn); color:var(--warn); }
+.missao-passo.feito { color:var(--ok); border-color:var(--ok); background:rgba(46,204,113,.09); }
+.missao-passo.feito .n { border-color:var(--ok); color:var(--ok); }
+.missao-passo.errou { animation:shakePlaca .39s; border-color:var(--err); }
+
+/* juice: popup de pontos, flash de kpi, ticker de marco */
+.popup-pts { position:fixed; z-index:65; font:800 17px/1 var(--display); font-variant-numeric:tabular-nums;
+  color:var(--primary);
+  pointer-events:none; animation:popFloat 1.17s ease-out forwards; transform:translateX(-50%); }
+@keyframes popFloat { from{opacity:1; transform:translateX(-50%) translateY(0);} to{opacity:0; transform:translateX(-50%) translateY(-42px);} }
+/* pendura na faixa de cima como todo o resto do HUD, em vez de num 54px que
+   não sabia a altura dela. */
+#marco-ticker { position:fixed; top:calc(var(--hud-topo, 54px) + 9px); left:50%; transform:translateX(-50%); z-index:65;
+  background:var(--brand-gradient) no-repeat; color:#fff; font-weight:800; font-size:13.5px; letter-spacing:.01em;
+  padding:6px 17px; border-radius:var(--r-pill); opacity:0; transition:opacity var(--t-estado); pointer-events:none; }
+#marco-ticker.mostrando { opacity:1; }
+
+/* ===== ASSINATURA — os dois placares =====
+   Primeiro foi uma <table> de três colunas; depois uma régua de eixo único, com
+   a barra do manual crescendo pra esquerda e a do AutoLoad pra direita. A régua
+   resolvia o "para que lado se lê", mas continuava sendo UMA peça compartilhada:
+   sete linhas finas, dois números por linha, e o visitante tinha que varrer o
+   olho na horizontal pra montar cada comparação.
+
+   Agora são DOIS CARTÕES — o que a pessoa fez na mão e o que o AutoLoad dela
+   fez — com as MESMAS três métricas, na mesma ordem, na mesma altura. Cada
+   número é grande o bastante pra ser lido a três metros, e a comparação vira o
+   gesto mais barato que existe: olhar de um cartão pro outro. O delta (▲/▼) mora
+   só no cartão do AutoLoad, porque a diferença é o argumento dele.
+
+   As duas cores são as mesmas de sempre: vermelho claro = manual, verde = o
+   AutoLoad montado pelo visitante. */
+.placar-duo { display:grid; grid-template-columns:1fr 1fr; gap:10px; margin:12px 0 14px; align-items:start; }
+.pl-card { background:#202935; border:1px solid var(--steel-dim); border-radius:var(--r-card); padding:11px 13px 13px; }
+/* o fio de topo é a única marca de lado no cartão: a cor já diz de quem ele é. */
+.pl-card.man { border-top:3px solid #ff9a9a; }
+.pl-card.aut { border-top:3px solid var(--ok); }
+/* o cabecalho nomeia a MODALIDADE, e e a primeira coisa que se le no cartao:
+   selo em cima, nome embaixo, os dois centrados. O selo e VAZADO — anel de
+   contorno com o icone monoline dentro, sem preenchimento nenhum —, que e a
+   regra da chapa de icones inteira. */
+.pl-tit { display:flex; flex-direction:column; align-items:center; gap:8px;
+  padding-bottom:12px; margin-bottom:2px; border-bottom:1px solid var(--steel-dim); }
+.pl-selo { display:flex; align-items:center; justify-content:center;
+  width:44px; height:44px; border:1.5px solid currentColor; border-radius:50%;
+  background:none; color:inherit; }
+.pl-modo { font:800 13px/1 var(--display); letter-spacing:.18em; text-transform:uppercase; }
+.pl-card.man .pl-tit { color:#ff9a9a; }
+.pl-card.aut .pl-tit { color:var(--ok); }
+/* O PLACAR DO LADO abre o cartão, antes das métricas de operação.
+   É o número que o visitante viu subindo no painel de fliperama do HUD durante
+   o turno inteiro; o placar final confirma esses dois, em vez de trocá-los por
+   outra conta. Vem em caixa própria (fundo mais fundo, moldura) pra não ser
+   lido como só mais uma métrica: as de baixo se comparam entre si, este é o
+   resultado do lado.
+
+   Maior que .pl-val de propósito — é o topo da hierarquia do cartão. */
+.pl-pts { margin:11px 0 2px; padding:9px 11px 10px; text-align:center;
+  background:#1a2029; border:1px solid var(--steel-dim);
+  animation:statReveal .5s var(--ease) both; animation-delay:.1s; }
+.pl-pts .pl-lab { text-align:center; }
+.pl-pts-n { margin-top:4px; font:800 clamp(38px,6.2vh,54px)/1 var(--display);
+  font-variant-numeric:tabular-nums; letter-spacing:-.02em; }
+.pl-card.man .pl-pts-n { color:#ff9a9a; }
+.pl-card.aut .pl-pts-n { color:var(--ok); }
+/* a primeira métrica não precisa mais do fio de topo: a caixa dos pontos já
+   separou o cabeçalho do corpo. */
+.pl-pts + .pl-met { border-top:1px solid var(--steel-dim); }
+
+/* A nota do ranking mora ENTRE os cartões e a tabela — é a ponte entre um e
+   outra, e é onde o olho já está indo. */
+.pl-nota { margin:-6px 0 14px; text-align:center; font-size:12.5px; line-height:1.45;
+  color:var(--ink-dim); }
+.pl-nota b { color:#ff9a9a; font-weight:800; }
+
+/* as métricas entram em cascata, uma atrás da outra, como as cenas do console —
+   o placar se resolve na frente do visitante em vez de já estar pronto. */
+.pl-met { padding-top:11px;
+  animation:statReveal .5s var(--ease) both; animation-delay:calc(var(--i,0)*.09s + .18s); }
+.pl-met + .pl-met { margin-top:11px; border-top:1px solid var(--steel-dim); }
+.pl-lab { font:700 10.5px/1.25 var(--display); letter-spacing:.12em; text-transform:uppercase; color:var(--steel); }
+/* baseline, não center: o delta é pequeno ao lado de um número grande, e alinhar
+   pelo pé das duas fontes é o que mantém a linha do cartão da esquerda na mesma
+   altura da do cartão da direita — que é o que faz a comparação funcionar. */
+.pl-linha { display:flex; align-items:baseline; gap:8px; margin-top:5px; }
+.pl-val { font:800 clamp(34px,5.6vh,48px)/1 var(--display); font-variant-numeric:tabular-nums; letter-spacing:-.02em; }
+.pl-card.man .pl-val { color:#ff9a9a; }
+.pl-card.aut .pl-val { color:var(--ok); }
+.pl-delta { font:800 15px/1 var(--display); color:var(--steel); white-space:nowrap; }
+.pl-delta.melhor { color:var(--ok); }
+/* quem perde a métrica recua; quem ganha fica cheio. É a leitura de relance. */
+.pl-met.perde { opacity:.42; }
+.pl-met.perde .pl-val { font-weight:600; }
+/* ausência de dado (ciclo sem nenhum caminhão fechado) não é zero: o número vira
+   um traço em cor de rótulo, e não disputa a métrica. */
+.pl-met.vazio .pl-val { color:var(--steel); }
+/* fora do totem 1920×1080 os dois cartões não cabem lado a lado; empilhados a
+   ordem das métricas ainda casa, só custa uma rolagem. */
+@media (max-width:520px) { .placar-duo { grid-template-columns:1fr; } }
+
+/* o ganho é o título do placar, não uma tarja: número grande, frase embaixo. */
+.ganho-badge { text-align:center; margin:12px 0 4px;
+  animation:statReveal .52s var(--ease) both; }
+@keyframes statReveal { from{ opacity:0; transform:translateY(10px) scale(.94); } to{ opacity:1; transform:none; } }
+.ganho-badge .n { display:block; font:800 clamp(34px,6.4vh,54px)/1 var(--display); font-variant-numeric:tabular-nums;
+  letter-spacing:-.02em; color:var(--primary); }
+.ganho-badge .t { display:block; font-size:14px; line-height:1.35; color:var(--ink-dim); margin-top:5px; }
+.veredito { display:block; margin-top:8px; font:800 15px/1.3 var(--display); color:var(--ok); }
+.pts-breakdown { display:flex; justify-content:space-between; gap:8px; font-size:12.5px; color:var(--ink-dim);
+  background:#202935; border:1px solid var(--steel-dim); border-radius:var(--r-card); padding:10px 13px; margin:2px 0 10px; }
+.pts-breakdown b { display:block; font:800 17px/1 var(--display); font-variant-numeric:tabular-nums;
+  color:var(--ink); margin-top:4px; }
+.cta-box { background:linear-gradient(rgba(250,9,78,.07), rgba(250,9,78,.07)), #202935;
+  border:1px solid var(--steel-dim);
+  border-radius:0; padding:13px 15px; font-size:13px; line-height:1.45; color:var(--ink-dim); margin:12px 0; }
+.cta-box b { color:var(--ink); }
+.mods-usados { display:flex; flex-wrap:wrap; gap:6px; margin:8px 0; }
+/* ===== fecho do placar: contagem + as duas saídas =====
+   Os dois botões eram <button> irmãos soltos no card, sem regra nenhuma de
+   layout: encostavam um no outro pelos 4 px de espaço em branco do HTML e
+   tinham a mesma largura de conteúdo, então "Próximo visitante" e "Remontar
+   módulos" liam como um par indistinto grudado no rodapé.
+
+   Agora repetem o desenho de #builder-foot, que é o rodapé que o visitante já
+   atravessou no montador: fio de separação, secundário à ESQUERDA e primário à
+   DIREITA. A ordem no DOM foi invertida junto — antes o primário vinha antes —
+   pra que a posição de cada um seja a mesma nas duas telas.
+
+   O primário cresce ao dobro do secundário: sair pro próximo visitante é o
+   caminho de sempre num totem de feira, e remontar é a exceção. Com
+   `flex-wrap` e base de 200/260 px eles ficam lado a lado na TV do estande e
+   empilham num card estreito, em vez de espremer a letra. */
+#end-auto { font:600 12px/1 var(--display); letter-spacing:.1em; text-transform:uppercase; color:var(--steel);
+  text-align:center; margin-top:20px; padding-top:18px; border-top:1px solid var(--steel-dim); }
+#end-auto span { font-variant-numeric:tabular-nums; color:var(--ink-dim); }
+#end-foot { display:flex; flex-wrap:wrap; gap:14px; margin-top:14px; }
+#end-foot .btn-ghost { flex:1 1 200px; }
+#end-foot .btn-primary { flex:2 1 260px; }
+
+/* ===== admin =====
+   Tela de operador, não de visitante: nada de redesenho, só a mesma moldura e a
+   mesma tipografia das outras três. As colunas de número em tabular, que é o
+   que se confere de fato aqui. */
+#admin-tab { width:100%; border-collapse:collapse; font-size:12.5px; margin-top:10px; }
+#admin-tab th, #admin-tab td { padding:7px 8px; border-bottom:1px solid var(--steel-dim); text-align:left; }
+#admin-tab th { font:700 10px/1 var(--display); letter-spacing:.14em; color:var(--steel);
+  text-transform:uppercase; white-space:nowrap; }
+#admin-tab td { color:var(--ink-dim); }
+#admin-tab td:nth-child(n+4) { font-family:var(--display); font-variant-numeric:tabular-nums; color:var(--ink); }
+#admin-tab tr:last-child td { border-bottom:none; }
+
+/* A dica só aparece no montador, e lá ela ficava embaixo do painel (canto
+   direito) — invisível, avisando ninguém. Mora no pé da coluna do visor, que é
+   justamente a faixa da tela onde arrastar e dar pinça faz alguma coisa. */
+#hint3d { position:fixed; z-index:55; left:16px; bottom:10px; font:600 11.5px/1 var(--display); letter-spacing:.08em;
+  text-transform:uppercase; color:var(--steel); pointer-events:none; display:none; }
+#hint3d.ativo { display:block; }
+
+/* ===== orquestração autoload (#auto-console) =====
+   Porte de _template_expo3d.html — painel verde que espelha o backend
+   automatizado processando cada etapa: trilha de nós, documento voando até o
+   nó "sistemas", cena SVG por etapa no palco, log tipo terminal. */
+#auto-console { position:absolute; right:1.2%; bottom:14px; width:300px;
+  background:rgba(21,38,29,.92); border:1px solid rgba(46,204,113,.3); border-radius:var(--r-card);
+  padding:8px 11px 9px; container-type:inline-size; }
+.ac-head { display:flex; align-items:center; gap:7px; font-size:10.5px; font-weight:800;
+  letter-spacing:1.2px; text-transform:uppercase; color:#79dfa4; white-space:nowrap; }
+.ac-led { width:7px; height:7px; border-radius:0; background:var(--ok); box-shadow:0 0 8px var(--ok);
+  animation:acLed 2.5s ease-in-out infinite; }
+@keyframes acLed { 50%{ opacity:.22; box-shadow:none; } }
+.ac-head .cont { margin-left:auto; color:#4f7b66; letter-spacing:.6px;
+  min-width:0; overflow:hidden; text-overflow:ellipsis; }
+
+.ac-palco { position:relative; margin:7px 0 2px; border-radius:var(--r-card); overflow:hidden;
+  padding:5px 0 3px;
+  background:rgba(46,204,113,.05); border:1px solid rgba(46,204,113,.16);
+  display:flex; flex-direction:column; align-items:center; justify-content:center;
+  transition:border-color var(--t-estado) var(--ease), background var(--t-estado) var(--ease); }
+.ac-palco[data-cena=""] { background:rgba(46,204,113,.02); border-color:rgba(46,204,113,.08);
+  animation:acPalcoOcioso 3.6s ease-in-out infinite; }
+@keyframes acPalcoOcioso {
+  50% { background:rgba(46,204,113,.06); border-color:rgba(46,204,113,.16); }
+}
+.ac-palco:not([data-cena=""]) { border-color:rgba(46,204,113,.3); }
+.ac-cena { display:block; width:100%; height:auto; aspect-ratio:240/68; }
+.ac-legenda { font-size:10px; font-weight:800; letter-spacing:.9px; text-transform:uppercase;
+  color:#79dfa4; line-height:1; margin-bottom:3px; white-space:nowrap; }
+
+.ac-cena .lin { fill:none; stroke:rgba(46,204,113,.55); stroke-width:1.6; stroke-linecap:round; stroke-linejoin:round; }
+.ac-cena .lin.marcado { stroke:var(--ok); stroke-width:2.1; }
+.ac-cena .sol { fill:#0f2a20; stroke:rgba(46,204,113,.5); stroke-width:1.4; stroke-linejoin:round; }
+.ac-cena .esc { fill:#163020; stroke:rgba(46,204,113,.3); stroke-width:1.2; }
+.ac-cena .cheio { fill:var(--ok); stroke:none; }
+.ac-cena .tx { font-family:ui-monospace,'Cascadia Mono',Consolas,monospace; font-size:9.5px; font-weight:700;
+  fill:#9eeac1; letter-spacing:.8px; }
+.ac-cena .tx.peq { font-size:6.5px; font-weight:800; fill:#4f7b66; letter-spacing:1px; }
+.ac-cena .tx.forte { fill:var(--ok); }
+
+.ac-cena .cn-check { transform-origin:0 0; animation:cnCheck .44s cubic-bezier(.22,1.3,.36,1) .81s both; }
+@keyframes cnCheck { from { opacity:0; transform:scale(.2); } }
+
+.ac-cena .cn-d1 { animation-delay:.13s; }
+.ac-cena .cn-d2 { animation-delay:.31s; }
+.ac-cena .cn-d3 { animation-delay:.49s; }
+.ac-cena .cn-d4 { animation-delay:.68s; }
+
+.ac-cena .cn-surge { animation:cnSurge .36s ease-out both; }
+@keyframes cnSurge { from { opacity:0; transform:translateY(4px); } }
+.ac-cena .cn-desenha { stroke-dasharray:92; stroke-dashoffset:0; animation:cnDesenha .49s ease-out both; }
+@keyframes cnDesenha { from { stroke-dashoffset:92; } }
+.ac-cena .cn-tick { stroke-dasharray:15; stroke-dashoffset:0; animation:cnTick .31s ease-out both; }
+@keyframes cnTick { from { stroke-dashoffset:15; } }
+.ac-cena .cn-assenta { animation:cnAssenta .55s cubic-bezier(.22,1.3,.36,1) both; }
+@keyframes cnAssenta { from { transform:translateY(-9px); } }
+.ac-cena .cn-entra { animation:cnEntra .72s cubic-bezier(.3,0,.2,1) both; }
+@keyframes cnEntra { from { opacity:0; transform:translateX(-34px); } }
+
+.ac-cena .cn-scan { opacity:0; animation:cnScan .65s ease-in-out .10s both; }
+@keyframes cnScan { from { opacity:0; transform:translateX(-30px); } 25%,75% { opacity:1; }
+  to { opacity:0; transform:translateX(30px); } }
+.ac-cena .cn-marca { filter:drop-shadow(0 0 2.5px rgba(250,9,78,.42));
+  animation:cnMarcaAcende .57s ease-out .39s both; }
+@keyframes cnMarcaAcende { from { filter:drop-shadow(0 0 0 rgba(250,9,78,0)); } }
+.ac-cena .cn-marca-varre { transform-origin:0 0; animation:cnMarcaVarre .57s cubic-bezier(.3,0,.2,1) .39s both; }
+@keyframes cnMarcaVarre { from { transform:scaleX(0); } }
+.ac-cena .cn-marca-fio { opacity:0; animation:cnMarcaFio .96s linear both; }
+@keyframes cnMarcaFio { from,40% { opacity:1; } }
+.ac-palco[data-cena="checkin"] .cn-placa .sol { animation:cnPlacaOk .52s ease-out .62s both; }
+@keyframes cnPlacaOk { 50% { stroke:var(--ok); } }
+
+.ac-cena .cn-onda { opacity:0; animation:cnOnda .91s ease-out both; transform-origin:0 0; }
+@keyframes cnOnda { from { opacity:.9; transform:scale(.35); } to { opacity:0; transform:scale(1.5); } }
+.ac-cena .cn-troca { animation:cnTroca .65s ease-out .23s both; }
+@keyframes cnTroca { from { opacity:0; transform:translateY(-7px); } 40% { opacity:1; transform:none; } }
+
+.ac-cena .cn-rolando { opacity:0; animation:cnRolando .6s steps(4) both; }
+@keyframes cnRolando { from { opacity:1; } 80% { opacity:1; } to { opacity:0; } }
+.ac-cena .cn-fecha { animation:cnFecha .39s cubic-bezier(.22,1.3,.36,1) .6s both; transform-origin:0 0; }
+@keyframes cnFecha { from { opacity:0; transform:scale(.7); } }
+
+.ac-cena .cn-faisca { opacity:0; animation:cnFaisca .39s ease-out .21s both; transform-origin:0 0; }
+@keyframes cnFaisca { from { opacity:0; transform:scale(.4); } 40% { opacity:1; transform:scale(1.1); }
+  to { opacity:0; transform:scale(1.4); } }
+.ac-cena .cn-nivel { transform-origin:0 0; animation:cnEncher .44s ease-out .34s both; }
+@keyframes cnEncher { from { transform:scaleY(0); } }
+
+.ac-cena .cn-folha { animation:cnFolha .55s cubic-bezier(.3,0,.2,1) .08s both; }
+@keyframes cnFolha { from { opacity:0; transform:translateY(-18px); } 35% { opacity:1; } }
+.ac-cena .cn-selo { transform-origin:0 0; animation:cnSelo .34s cubic-bezier(.3,0,.2,1) .6s both; }
+@keyframes cnSelo { from { opacity:0; transform:scale(2.4) rotate(-14deg); } 60% { opacity:1; } }
+
+.ac-cena .cn-braco { transform-origin:0 0; transform:rotate(58deg); animation:cnGira .49s cubic-bezier(.3,0,.2,1) .08s both; }
+@keyframes cnGira { from { transform:rotate(0deg); } }
+.ac-cena .cn-luz-v { opacity:.15; animation:cnApaga .39s ease-out .26s both; }
+@keyframes cnApaga { from { opacity:1; } }
+.ac-cena .cn-luz-g { animation:cnAcende .39s ease-out .42s both; }
+@keyframes cnAcende { from { opacity:.15; } }
+
+.ac-trilha { position:relative; display:flex; align-items:flex-start; margin:8px 2px 7px; height:25px; }
+.ac-trilha::before { content:''; position:absolute; left:6px; right:6px; top:4px; height:2px; border-radius:0;
+  background:linear-gradient(90deg, rgba(46,204,113,.12), rgba(46,204,113,.45)); }
+.ac-no { position:relative; flex:1; display:flex; flex-direction:column; align-items:center; }
+.ac-no i { width:10px; height:10px; border-radius:0; background:#162c21; border:1.5px solid rgba(46,204,113,.4);
+  transition:transform var(--t-estado) ease-out, background var(--t-estado), box-shadow var(--t-estado); }
+.ac-no b { font-size:6.5px; font-size:min(6.5px, 1.9cqw); font-weight:800; letter-spacing:0;
+  text-transform:uppercase; color:#436454;
+  margin-top:4px; white-space:nowrap; transition:color var(--t-estado); }
+.ac-no.ativo i { background:var(--ok); box-shadow:0 0 11px rgba(46,204,113,.85); transform:scale(1.5); }
+.ac-no.ativo b { color:#9eeac1; }
+.ac-no.feito i { background:var(--ok); border-color:var(--ok); box-shadow:none; transform:scale(1.15); opacity:.85; }
+.ac-no.feito b { color:#79dfa4; }
+.ac-no.servidor i { width:13px; height:11px; border-radius:0; background:#0f2a20; border-color:rgba(46,204,113,.75); }
+.ac-no.servidor.ativo i { background:var(--ok); transform:scale(1.2); }
+
+.ac-doc { position:absolute; top:-3px; font-size:12px; pointer-events:none; z-index:2;
+  filter:drop-shadow(0 0 6px rgba(46,204,113,.9)); transition:left .72s cubic-bezier(.4,0,.5,1), opacity var(--t-layout); }
+
+.ac-log { font-family:ui-monospace,'Cascadia Mono',Consolas,monospace; font-size:10.5px; line-height:1.62;
+  display:flex; flex-direction:column; }
+.ac-linha { display:flex; gap:6px; align-items:baseline; white-space:nowrap; overflow:hidden;
+  color:#b6e6cb; animation:acEscreve .39s ease-out; transition:opacity .65s; }
+.ac-linha .alvo { color:#54876c; min-width:0; overflow:hidden; text-overflow:ellipsis; }
+.ac-linha .ok { margin-left:auto; color:var(--ok); font-weight:700; }
+.ac-linha .ok.esperando { color:#54876c; }
+.ac-linha.nota { color:#ffa8cd; }
+@keyframes acEscreve { from{ opacity:0; transform:translateX(-12px); } to{ opacity:1; transform:none; } }
+@media (prefers-reduced-motion:reduce){
+  .ac-led{ animation:none; } .ac-doc{ transition:none; } .ac-linha{ animation:none; }
+  .ac-palco, .ac-palco *{ animation:none !important; }
+}
+
+/* ===== editor de planta (tela `editor`, só admin) =====================
+   Ao contrário das outras telas, esta NÃO é um .overlay: o canvas 3D é a
+   área de trabalho, e o clique precisa chegar nele. Por isso o container
+   ocupa a tela inteira com pointer-events:none e só os painéis reativam o
+   ponteiro. O visual é o mesmo aço das demais telas — mesma paleta, mesma
+   moldura — em densidade de ferramenta: alvos de 30px em vez dos 56px do
+   kiosk, porque aqui quem clica é desenvolvedor com mouse, não visitante
+   com o dedo. */
+#screen-editor { position:fixed; inset:0; z-index:100; pointer-events:none;
+  font-size:13px; color:var(--ink); }
+#screen-editor .ed-painel { pointer-events:auto; background:rgba(41,50,63,.96);
+  border:1px solid var(--steel-dim); border-radius:var(--r-card); backdrop-filter:blur(9px);
+  box-shadow:0 10px 34px rgba(0,0,0,.42); }
+#screen-editor button { min-height:0; padding:7px 11px; font-size:12px; font-weight:700; border-radius:var(--r-input); }
+#screen-editor input, #screen-editor select { min-height:0; padding:5px 8px; font-size:12px; border-radius:var(--r-input); }
+#screen-editor input[type=color] { padding:2px; height:28px; width:44px; cursor:pointer; }
+#screen-editor input[type=range] { padding:0; width:100%; accent-color:var(--primary); }
+#screen-editor input[type=checkbox] { width:auto; min-height:0; accent-color:var(--primary); }
+
+/* barra superior */
+.ed-barra { position:absolute; top:12px; left:246px; right:314px; display:flex; gap:6px;
+  align-items:center; flex-wrap:wrap; padding:8px 10px; }
+.ed-barra .ed-titulo { font:800 13px/1 var(--font-red-hat-display),sans-serif; margin-right:6px; white-space:nowrap; }
+.ed-barra .ed-titulo span { color:var(--primary); }
+.ed-sep { width:1px; align-self:stretch; background:var(--steel-dim); margin:0 3px; }
+.ed-estado { margin-left:auto; font:600 11px/1.35 var(--display); color:var(--ink-dim); text-align:right; }
+.ed-estado .sujo { color:var(--warn); }
+.ed-estado .ok { color:var(--ok); }
+.ed-estado .err { color:var(--err); }
+button.ed-on { background:var(--brand-gradient) no-repeat; border-color:transparent; color:#fff; }
+
+/* lista lateral */
+.ed-lista { position:absolute; top:12px; left:12px; bottom:12px; width:222px;
+  display:flex; flex-direction:column; overflow:hidden; }
+.ed-lista header { padding:10px 11px 7px; }
+.ed-lista .ed-rolagem { flex:1; overflow-y:auto; padding:0 7px 10px; }
+.ed-cat { font:800 9.5px/1 var(--display); letter-spacing:.12em; text-transform:uppercase;
+  color:var(--steel); margin:11px 5px 4px; }
+.ed-item { display:flex; align-items:center; gap:7px; width:100%; text-align:left;
+  padding:5px 8px; border-radius:var(--r-input); background:transparent; border:1px solid transparent;
+  color:var(--ink-dim); font-size:12px; font-weight:500; cursor:pointer; }
+.ed-item:hover { background:rgba(255,255,255,.06); }
+.ed-item.sel { background:var(--primary); border-color:transparent; color:#fff; font-weight:700; }
+.ed-item i { width:7px; height:7px; border-radius:0; background:var(--steel); flex:none; font-style:normal; }
+.ed-item.sel i { background:#fff; }
+.ed-item.fora i { background:var(--warn); }
+.ed-item.travado::after { content:'🔒'; font-size:9px; margin-left:auto; opacity:.7; }
+.ed-item .ed-nome { overflow:hidden; text-overflow:ellipsis; white-space:nowrap; }
+
+/* painel da direita */
+.ed-props { position:absolute; top:12px; right:12px; bottom:12px; width:290px;
+  display:flex; flex-direction:column; overflow:hidden; }
+.ed-abas { display:flex; gap:4px; padding:9px 10px 0; }
+.ed-abas button { flex:1; border-radius:0; }
+.ed-corpo { flex:1; overflow-y:auto; padding:11px 12px 14px; }
+.ed-grp { font:800 9.5px/1 var(--display); letter-spacing:.12em; text-transform:uppercase;
+  color:var(--steel); margin:14px 0 5px; display:flex; align-items:center; gap:8px; }
+.ed-grp::after { content:''; flex:1; height:1px; background:var(--steel-dim); }
+.ed-grp:first-child { margin-top:0; }
+.ed-linha { display:flex; align-items:center; gap:6px; margin:5px 0; }
+.ed-linha > label { font:700 11px/1 var(--font-red-hat-display),sans-serif; color:var(--ink-dim);
+  width:62px; flex:none; }
+.ed-linha input[type=number], .ed-linha input[type=text], .ed-linha select { flex:1; width:0; min-width:0; }
+.ed-tri { display:grid; grid-template-columns:1fr 1fr 1fr; gap:5px; }
+.ed-tri input { width:100%; }
+.ed-eixo { font:700 9px/1 var(--display); color:var(--steel); text-align:center; margin-bottom:2px; }
+.ed-acoes { display:flex; gap:6px; margin-top:12px; }
+.ed-acoes button { flex:1; }
+button.ed-perigo { border-color:var(--err); color:var(--err); background:transparent; }
+button.ed-dup { border-color:var(--steel); color:var(--ink-dim); background:transparent; }
+.ed-aviso { background:rgba(245,166,35,.13); border:1px solid rgba(245,166,35,.42);
+  border-radius:var(--r-input); padding:8px 9px; font-size:11px; line-height:1.45; color:#f7cf94; margin:8px 0; }
+.ed-nota { font-size:10.5px; line-height:1.5; color:var(--steel); margin:6px 0; }
+.ed-nota code { font-family:var(--display); color:var(--ink-dim); }
+.ed-cabeca { font:800 15px/1.2 var(--font-red-hat-display),sans-serif; margin-bottom:3px;
+  overflow-wrap:anywhere; }
+.ed-tipo { font:600 10px/1 var(--display); color:var(--primary); letter-spacing:.06em; margin-bottom:2px; }
+.ed-vazio { color:var(--steel); font-size:12px; line-height:1.6; text-align:center; padding:26px 8px; }
+
+/* acervo */
+.ed-busca { width:100%; margin-bottom:8px; }
+.ed-add { display:flex; align-items:center; gap:8px; width:100%; text-align:left; padding:6px 9px;
+  background:transparent; border:1px solid var(--steel-dim); color:var(--ink-dim); margin:3px 0;
+  font-weight:600; }
+.ed-add:hover { border-color:var(--ink); color:var(--ink); }
+.ed-add .ed-id { margin-left:auto; font:500 9.5px/1 var(--display); color:var(--steel); }
+
+/* pontos do traçado */
+.ed-pontos { display:flex; flex-wrap:wrap; gap:4px; margin:6px 0; }
+.ed-ponto { width:30px; padding:4px 0; text-align:center; font:700 10px/1 var(--display);
+  border:1px solid var(--steel-dim); background:transparent; color:var(--ink-dim); border-radius:var(--r-input); }
+.ed-ponto.sel { background:var(--primary); border-color:transparent; color:#fff; }
+.ed-ponto.espera { border-color:var(--warn); color:var(--warn); }
+.ed-ponto.sel.espera { background:var(--warn); border-color:var(--warn); color:#20160a; }
+
+/* rodapé de atalhos */
+.ed-ajuda { position:absolute; left:246px; bottom:12px; padding:6px 11px; font-size:11px;
+  color:var(--ink-dim); }
+.ed-ajuda b { color:var(--primary); font-weight:700; }
+
+/* carregando / erro */
+.ed-centro { position:absolute; inset:0; display:flex; align-items:center; justify-content:center;
+  pointer-events:auto; background:rgba(22,27,34,.72); backdrop-filter:blur(7px); }
+.ed-centro .ed-painel { padding:26px 30px; max-width:420px; text-align:center; }
+.ed-centro h2 { font-size:19px; margin-bottom:8px; }
+.ed-centro p { font-size:12.5px; line-height:1.6; color:var(--ink-dim); margin-bottom:14px; }

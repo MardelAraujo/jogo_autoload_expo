@@ -1,0 +1,3482 @@
+{
+ "version": 4,
+ "theme": {
+  "road": 16777215,
+  "basin": 16777215,
+  "base": 4351557,
+  "laneMarking": 16777215,
+  "groundPattern": "terrain-moss"
+ },
+ "terrain": {
+  "groundW": 850,
+  "groundD": 950,
+  "seaX": 240
+ },
+ "environment": {
+  "fogOn": true,
+  "fogColor": "#935f15",
+  "fogLevel": 0.85,
+  "dayNight": "day"
+ },
+ "customModels": {},
+ "typeOverrides": {},
+ "libraryRefs": {
+  "building/building-a": {
+   "name": "Building A",
+   "cat": "building",
+   "scale": 1,
+   "rotY": 0
+  },
+  "building/building-j": {
+   "name": "Building J",
+   "cat": "building",
+   "scale": 1,
+   "rotY": 0
+  },
+  "building/building-k": {
+   "name": "Building K",
+   "cat": "building",
+   "scale": 1,
+   "rotY": 0
+  },
+  "building/building-o": {
+   "name": "Building O",
+   "cat": "building",
+   "scale": 1,
+   "rotY": 0
+  },
+  "objects/cone": {
+   "name": "Cone",
+   "cat": "objects",
+   "scale": 1,
+   "rotY": 0
+  },
+  "objects/tubulacao-detalhada": {
+   "name": "Duto (detalhado)",
+   "cat": "Tancagem",
+   "scale": 1,
+   "rotY": 0
+  },
+  "plants/arvore-grande": {
+   "name": "Árvore grande",
+   "cat": "plants",
+   "scale": 0.12,
+   "rotY": 0
+  },
+  "plants/bosque-arvores": {
+   "name": "Bosque de árvores",
+   "cat": "plants",
+   "scale": 0.12,
+   "rotY": 0
+  },
+  "plants/bush-realista": {
+   "name": "Arbusto (realista)",
+   "cat": "plants",
+   "scale": 1,
+   "rotY": 0
+  },
+  "plants/bush-simples": {
+   "name": "Arbusto",
+   "cat": "plants",
+   "scale": 1,
+   "rotY": 0
+  },
+  "plants/grass": {
+   "name": "Grass",
+   "cat": "plants",
+   "scale": 1,
+   "rotY": 0
+  },
+  "structures/tanque-detalhado": {
+   "name": "Tanque de Armazenamento (detalhado)",
+   "cat": "Tancagem",
+   "scale": 1,
+   "rotY": 0
+  },
+  "trucks/delivery-flat": {
+   "name": "Delivery Flat",
+   "cat": "trucks",
+   "scale": 1,
+   "rotY": 0
+  },
+  "trucks/fuel-truck-classic": {
+   "name": "Fuel Truck Classic",
+   "cat": "trucks",
+   "scale": 1,
+   "rotY": 0
+  },
+  "trucks/fuel-truck-industrial": {
+   "name": "Fuel Truck Industrial",
+   "cat": "trucks",
+   "scale": 1,
+   "rotY": 0
+  },
+  "trucks/fuel-truck-style-adapted": {
+   "name": "Fuel Truck Style Adapted",
+   "cat": "trucks",
+   "scale": 1,
+   "rotY": 0
+  },
+  "trucks/truck-flat": {
+   "name": "Truck Flat",
+   "cat": "trucks",
+   "scale": 1,
+   "rotY": 0
+  }
+ },
+ "elements": [
+  {
+   "type": "pavimento",
+   "cat": "Pátio",
+   "name": "Pavimento do pátio",
+   "p": [
+    31,
+    0,
+    98
+   ],
+   "r": [
+    0,
+    0,
+    0
+   ],
+   "s": [
+    218,
+    1,
+    148
+   ]
+  },
+  {
+   "type": "pavimento",
+   "cat": "Pátio",
+   "name": "Pavimento do pátio de espera",
+   "p": [
+    -108,
+    0,
+    85
+   ],
+   "r": [
+    0,
+    0,
+    0
+   ],
+   "s": [
+    48,
+    1,
+    140
+   ]
+  },
+  {
+   "type": "navio",
+   "cat": "Modais",
+   "name": "Navio 1",
+   "p": [
+    172.8728628438862,
+    0,
+    90.70666313899122
+   ],
+   "r": [
+    0,
+    0,
+    0
+   ],
+   "s": [
+    0.69,
+    0.69,
+    0.69
+   ],
+   "locked": true
+  },
+  {
+   "type": "ferrovia",
+   "cat": "Modais",
+   "name": "Ferrovia 1",
+   "p": [
+    149.4893824516891,
+    0,
+    132.46505256368243
+   ],
+   "r": [
+    0,
+    0,
+    0
+   ],
+   "s": [
+    1.15,
+    1,
+    1.45
+   ],
+   "locked": true
+  },
+  {
+   "type": "cobertura",
+   "cat": "Carregamento",
+   "name": "Cobertura 1",
+   "p": [
+    149,
+    -1,
+    15
+   ],
+   "r": [
+    0,
+    0,
+    0
+   ],
+   "s": [
+    0.65,
+    0.8,
+    0.7
+   ],
+   "locked": true
+  },
+  {
+   "type": "pista",
+   "cat": "Via",
+   "name": "Pista 3",
+   "p": [
+    -129.47206326488754,
+    0.3,
+    -90.43820412100425
+   ],
+   "r": [
+    0,
+    -1.3264502315156903,
+    0
+   ],
+   "s": [
+    1.05,
+    2,
+    1
+   ],
+   "pista": {
+    "points": [
+     [
+      -58.08118314763641,
+      20.049650898091073
+     ],
+     [
+      3.88761801943744,
+      35.97972435584893
+     ],
+     [
+      65.85641918651129,
+      51.909797813606794
+     ],
+     [
+      189.794021520659,
+      83.76994472912251
+     ],
+     [
+      288.21958727197443,
+      111.25998529030487
+     ],
+     [
+      437.6692261889544,
+      147.49023856015395
+     ]
+    ],
+    "closed": false,
+    "width": 25
+   },
+   "color": 12629172,
+   "texture": "asphalt"
+  },
+  {
+   "type": "cobertura",
+   "cat": "Carregamento",
+   "name": "Cobertura 2",
+   "p": [
+    50,
+    0,
+    52
+   ],
+   "r": [
+    0,
+    -1.605702911834783,
+    0
+   ],
+   "s": [
+    0.7,
+    0.95,
+    1
+   ]
+  },
+  {
+   "type": "pista",
+   "cat": "Via",
+   "name": "Pista 3",
+   "p": [
+    -15,
+    1,
+    90
+   ],
+   "r": [
+    0,
+    0,
+    0
+   ],
+   "s": [
+    1,
+    1.7,
+    1
+   ],
+   "pista": {
+    "points": [
+     [
+      -42.56378850746188,
+      65.04380837708082
+     ],
+     [
+      -40.04886351985141,
+      -26.75108681690415
+     ],
+     [
+      40.010047240318514,
+      -38.72767849423195
+     ],
+     [
+      113.8698794896993,
+      -29.88440367330545
+     ],
+     [
+      116.5272659869953,
+      57.49320718508356
+     ],
+     [
+      29.590754432208115,
+      75.19063118930846
+     ]
+    ],
+    "closed": true,
+    "width": 18.5
+   },
+   "color": 12629172
+  },
+  {
+   "type": "pista",
+   "cat": "Via",
+   "name": "Pista 3",
+   "p": [
+    -117,
+    0,
+    108
+   ],
+   "r": [
+    0,
+    0,
+    0
+   ],
+   "s": [
+    1,
+    2.45,
+    1
+   ],
+   "pista": {
+    "points": [
+     [
+      -37.94501170004696,
+      -0.6358915047231335
+     ],
+     [
+      44.33522421376023,
+      -3.510844364948639
+     ]
+    ],
+    "closed": false,
+    "width": 11
+   },
+   "color": 12629172
+  },
+  {
+   "type": "pista",
+   "cat": "Via",
+   "name": "Pista 3 (cópia)",
+   "p": [
+    -117,
+    0,
+    135
+   ],
+   "r": [
+    0,
+    0.017453292519943295,
+    0
+   ],
+   "s": [
+    1,
+    2.45,
+    1
+   ],
+   "pista": {
+    "points": [
+     [
+      -37.94501170004696,
+      -0.6358915047231335
+     ],
+     [
+      49.14619378513065,
+      -3.239006069228651
+     ]
+    ],
+    "closed": false,
+    "width": 11
+   },
+   "color": 12629172
+  },
+  {
+   "type": "pista",
+   "cat": "Via",
+   "name": "Pista 5",
+   "p": [
+    21,
+    1,
+    127
+   ],
+   "r": [
+    0,
+    0,
+    0
+   ],
+   "s": [
+    1,
+    1,
+    1
+   ],
+   "pista": {
+    "points": [
+     [
+      -82.48866500718043,
+      2.8198022781554357
+     ],
+     [
+      -19.107574362385748,
+      1.0327506270965046
+     ],
+     [
+      33.19104095512641,
+      0.90161539677311
+     ],
+     [
+      69.83106693969793,
+      -5.93191036188324
+     ],
+     [
+      81.32839444992305,
+      -35.87422461843818
+     ],
+     [
+      75.02161545671534,
+      -66.65584751194649
+     ]
+    ],
+    "closed": false,
+    "width": 14.5
+   },
+   "color": 12629172
+  },
+  {
+   "type": "pista",
+   "cat": "Via",
+   "name": "Pista 6 (cópia)",
+   "p": [
+    81,
+    1,
+    89
+   ],
+   "r": [
+    0,
+    0,
+    0
+   ],
+   "s": [
+    1,
+    1,
+    1
+   ],
+   "pista": {
+    "points": [
+     [
+      -143.86637518896794,
+      37.31638345540998
+     ],
+     [
+      -143.11304962388797,
+      3.556839372030737
+     ],
+     [
+      -133.6005215109784,
+      -16.7367657300841
+     ],
+     [
+      -107.34660775687888,
+      -32.13167858660009
+     ],
+     [
+      -67.8563284019506,
+      -36.08398954039487
+     ],
+     [
+      -38.565125702770644,
+      -35.20903053290198
+     ],
+     [
+      5.527801105130152,
+      -30.29230794104197
+     ],
+     [
+      21.96359468006881,
+      -8.179808977105978
+     ],
+     [
+      23.693262766914003,
+      36.97380919133117
+     ]
+    ],
+    "closed": false,
+    "width": 22
+   },
+   "color": 12629172
+  },
+  {
+   "type": "bacia",
+   "cat": "Tancagem",
+   "name": "Bacia 5 (cópia) (cópia)",
+   "p": [
+    47,
+    1,
+    77
+   ],
+   "r": [
+    0,
+    1.53588974175501,
+    0
+   ],
+   "s": [
+    0.35,
+    0.2,
+    0.5
+   ],
+   "color": 2565670
+  },
+  {
+   "type": "pista",
+   "cat": "Via",
+   "name": "Pista 8",
+   "p": [
+    -17,
+    1,
+    20
+   ],
+   "r": [
+    0,
+    0,
+    0
+   ],
+   "s": [
+    0.9,
+    1,
+    1
+   ],
+   "pista": {
+    "points": [
+     [
+      -53.351724423304404,
+      65.41940370460458
+     ],
+     [
+      -32.96158576898961,
+      24.661789669734674
+     ],
+     [
+      1.4202220621987323,
+      13.644411298547027
+     ],
+     [
+      34.84695592971271,
+      12.974346458987895
+     ],
+     [
+      121.27524135974575,
+      23.781175594997535
+     ],
+     [
+      138.67331094036402,
+      58.32519374374169
+     ]
+    ],
+    "closed": false,
+    "width": 20.5
+   },
+   "color": 12629172
+  },
+  {
+   "type": "truck_center",
+   "cat": "Pátio",
+   "name": "Truck Center 1",
+   "p": [
+    -104,
+    -1,
+    70
+   ],
+   "r": [
+    0,
+    -1.5707963267948966,
+    0
+   ],
+   "s": [
+    1,
+    1.4,
+    1
+   ],
+   "board": {
+    "calls": "ABC-123",
+    "prefix": "A",
+    "period": 4,
+    "title": "CHAMADA DE SENHA",
+    "message": "DIRIJA-SE À VAGA"
+   }
+  },
+  {
+   "type": "balanca",
+   "cat": "Pátio",
+   "name": "Balança de pesagem 1",
+   "p": [
+    -10.310198673241986,
+    1,
+    58.36456883239124
+   ],
+   "r": [
+    0,
+    -1.5707963267948966,
+    0
+   ],
+   "s": [
+    2.2,
+    1.6,
+    1
+   ]
+  },
+  {
+   "type": "portaria",
+   "cat": "Portaria",
+   "name": "Portaria 1",
+   "p": [
+    -106,
+    0,
+    119
+   ],
+   "r": [
+    0,
+    -1.53588974175501,
+    0
+   ],
+   "s": [
+    1,
+    1.05,
+    1
+   ]
+  },
+  {
+   "type": "cancela",
+   "cat": "Portaria",
+   "name": "Cancela 1",
+   "p": [
+    -111.04569211318359,
+    0,
+    140.47570763290517
+   ],
+   "r": [
+    0,
+    1.5707963267948966,
+    0
+   ],
+   "s": [
+    1.75,
+    1,
+    1
+   ],
+   "gate": {
+    "range": 18,
+    "delayOpen": 2,
+    "delayClose": 2
+   }
+  },
+  {
+   "type": "cancela",
+   "cat": "Portaria",
+   "name": "Cancela 1 (cópia)",
+   "p": [
+    -104.96924913010554,
+    0,
+    97.81273312042192
+   ],
+   "r": [
+    0,
+    -1.5707963267948966,
+    0
+   ],
+   "s": [
+    1.75,
+    1,
+    1
+   ],
+   "gate": {
+    "range": 18,
+    "delayOpen": 2,
+    "delayClose": 2
+   }
+  },
+  {
+   "type": "totem",
+   "cat": "Portaria",
+   "name": "Totem 2",
+   "p": [
+    -116.20732594747739,
+    0,
+    126.00135954961885
+   ],
+   "r": [
+    0,
+    0,
+    0
+   ],
+   "s": [
+    1.21,
+    1.21,
+    1.21
+   ]
+  },
+  {
+   "type": "totem",
+   "cat": "Portaria",
+   "name": "Totem 2 (cópia)",
+   "p": [
+    -98.59149447284565,
+    0,
+    112.43978450186304
+   ],
+   "r": [
+    0,
+    3.141592653589793,
+    0
+   ],
+   "s": [
+    1.21,
+    1.21,
+    1.21
+   ]
+  },
+  {
+   "type": "vistoria",
+   "cat": "Pátio",
+   "name": "Guarita de vistoria 1",
+   "p": [
+    122.20785152645172,
+    -1,
+    101.98877464224665
+   ],
+   "r": [
+    0,
+    0,
+    0
+   ],
+   "s": [
+    1.29,
+    1.6,
+    1.29
+   ]
+  },
+  {
+   "type": "bacia",
+   "cat": "Tancagem",
+   "name": "Bacia 7",
+   "p": [
+    -146.05601715489308,
+    0,
+    79.90113843485923
+   ],
+   "r": [
+    0,
+    1.5707963267948966,
+    0
+   ],
+   "s": [
+    0.6,
+    0.22,
+    -0.03
+   ],
+   "color": 2048538
+  },
+  {
+   "type": "bacia",
+   "cat": "Tancagem",
+   "name": "Bacia 7 (cópia)",
+   "p": [
+    -146.80938772385466,
+    0.2,
+    -2.414900629398332
+   ],
+   "r": [
+    0,
+    1.5707963267948966,
+    0
+   ],
+   "s": [
+    0.55,
+    0.22,
+    -0.03
+   ],
+   "color": 1322001
+  },
+  {
+   "type": "arvore",
+   "cat": "Paisagismo",
+   "name": "Árvore 8 (cópia) (cópia) (cópia) (cópia) (cópia)",
+   "p": [
+    -146.28766113516625,
+    0,
+    66.02660588281319
+   ],
+   "r": [
+    0,
+    0,
+    0
+   ],
+   "s": [
+    0.59,
+    0.59,
+    0.59
+   ],
+   "seed": 0.3401621935793039
+  },
+  {
+   "type": "arvore",
+   "cat": "Paisagismo",
+   "name": "Árvore 8 (cópia) (cópia) (cópia) (cópia) (cópia) (cópia)",
+   "p": [
+    -146.15813983666897,
+    0,
+    73.68867603587498
+   ],
+   "r": [
+    0,
+    0,
+    0
+   ],
+   "s": [
+    0.59,
+    0.59,
+    0.59
+   ],
+   "seed": 0.062066259799351875
+  },
+  {
+   "type": "arvore",
+   "cat": "Paisagismo",
+   "name": "Árvore 8 (cópia) (cópia) (cópia) (cópia) (cópia) (cópia) (cópia)",
+   "p": [
+    -146.03431945759542,
+    0,
+    80.8226939990315
+   ],
+   "r": [
+    0,
+    0,
+    0
+   ],
+   "s": [
+    0.59,
+    0.59,
+    0.59
+   ],
+   "seed": 0.9363479543218379
+  },
+  {
+   "type": "arvore",
+   "cat": "Paisagismo",
+   "name": "Árvore 8 (cópia) (cópia) (cópia) (cópia) (cópia) (cópia) (cópia) (cópia)",
+   "p": [
+    -146.12527234017514,
+    0,
+    87.65492264729791
+   ],
+   "r": [
+    0,
+    0,
+    0
+   ],
+   "s": [
+    0.59,
+    0.59,
+    0.59
+   ],
+   "seed": 0.7718465537643264
+  },
+  {
+   "type": "arvore",
+   "cat": "Paisagismo",
+   "name": "Árvore 8 (cópia) (cópia) (cópia) (cópia) (cópia) (cópia) (cópia) (cópia) (cópia)",
+   "p": [
+    -146.069148981093,
+    0,
+    94.86920019570381
+   ],
+   "r": [
+    0,
+    0,
+    0
+   ],
+   "s": [
+    0.59,
+    0.59,
+    0.59
+   ],
+   "seed": 0.5483817062810746
+  },
+  {
+   "type": "arbusto",
+   "cat": "Paisagismo",
+   "name": "Arbusto 1 (cópia) (cópia) (cópia) (cópia) (cópia) (cópia) (cópia) (cópia) (cópia)",
+   "p": [
+    -146.1426920426332,
+    0,
+    98.4566564072138
+   ],
+   "r": [
+    0,
+    2.286381320112572,
+    0
+   ],
+   "s": [
+    0.71,
+    0.71,
+    0.71
+   ],
+   "color": 1455363,
+   "seed": 0.10037420002448982
+  },
+  {
+   "type": "arbusto",
+   "cat": "Paisagismo",
+   "name": "Arbusto 1 (cópia) (cópia) (cópia) (cópia) (cópia) (cópia) (cópia) (cópia) (cópia) (cópia)",
+   "p": [
+    -146.4015232108252,
+    0,
+    92.53888969106339
+   ],
+   "r": [
+    0,
+    -0.8552113334772214,
+    0
+   ],
+   "s": [
+    0.53,
+    0.53,
+    0.53
+   ],
+   "color": 1455363,
+   "seed": 0.882507639333396
+  },
+  {
+   "type": "arbusto",
+   "cat": "Paisagismo",
+   "name": "Arbusto 1 (cópia) (cópia) (cópia) (cópia) (cópia) (cópia) (cópia) (cópia) (cópia) (cópia) (cópia)",
+   "p": [
+    -145.97045378786865,
+    0,
+    89.89718797805571
+   ],
+   "r": [
+    0,
+    -1.9547687622336491,
+    0
+   ],
+   "s": [
+    0.65,
+    0.65,
+    0.65
+   ],
+   "color": 1455363,
+   "seed": 0.052569029485088015
+  },
+  {
+   "type": "vistoria",
+   "cat": "Pátio",
+   "name": "Guarita de vistoria 1 (cópia)",
+   "p": [
+    48,
+    0,
+    74
+   ],
+   "r": [
+    0,
+    -1.5707963267948966,
+    0
+   ],
+   "s": [
+    1.35,
+    1.5,
+    1.25
+   ]
+  },
+  {
+   "type": "bacia",
+   "cat": "Tancagem",
+   "name": "Bacia 4 (cópia)",
+   "p": [
+    150.29948568311335,
+    0,
+    25.181926886961236
+   ],
+   "r": [
+    0,
+    0,
+    0
+   ],
+   "s": [
+    0.35,
+    0.1,
+    10
+   ]
+  },
+  {
+   "type": "ferrovia",
+   "cat": "Modais",
+   "name": "Ferrovia 1 (cópia)",
+   "p": [
+    149.29177098825218,
+    0,
+    -301.6289028789384
+   ],
+   "r": [
+    0,
+    0,
+    0
+   ],
+   "s": [
+    1.15,
+    1,
+    1.45
+   ]
+  },
+  {
+   "type": "bacia",
+   "cat": "Tancagem",
+   "name": "Bacia 4 (cópia)",
+   "p": [
+    -116.03570947345706,
+    0,
+    2.904587105641575
+   ],
+   "r": [
+    0,
+    0,
+    0
+   ],
+   "s": [
+    1.2,
+    0.1,
+    3.65
+   ],
+   "color": 10395294,
+   "texture": "concrete",
+   "alpha": 0.55,
+   "locked": true
+  },
+  {
+   "type": "bacia",
+   "cat": "Tancagem",
+   "name": "Bacia 7 (cópia)",
+   "p": [
+    -146,
+    0,
+    121
+   ],
+   "r": [
+    0,
+    1.5707963267948966,
+    0
+   ],
+   "s": [
+    0.22,
+    0.22,
+    -0.05
+   ],
+   "color": 3305258,
+   "texture": "terrain-moss"
+  },
+  {
+   "type": "bacia",
+   "cat": "Tancagem",
+   "name": "Bacia 7 (cópia) (cópia)",
+   "p": [
+    -80.09203674696697,
+    0,
+    118.43850313725827
+   ],
+   "r": [
+    0,
+    1.5707963267948966,
+    0
+   ],
+   "s": [
+    0.2,
+    0.22,
+    -0.05
+   ],
+   "color": 1322001
+  },
+  {
+   "type": "arvore",
+   "cat": "Paisagismo",
+   "name": "Árvore 1 (cópia) (cópia) (cópia) (cópia) (cópia) (cópia) (cópia) (cópia) (cópia) (cópia) (cópia) (cópia) (cópia)",
+   "p": [
+    -103.59735602615066,
+    0,
+    316.3327220258555
+   ],
+   "r": [
+    0,
+    0,
+    0
+   ],
+   "s": [
+    1,
+    1,
+    1
+   ],
+   "seed": 0.7573067970448996
+  },
+  {
+   "type": "arvore",
+   "cat": "Paisagismo",
+   "name": "Árvore 1 (cópia) (cópia) (cópia) (cópia) (cópia) (cópia) (cópia) (cópia) (cópia) (cópia) (cópia) (cópia) (cópia) (cópia) (cópia)",
+   "p": [
+    62.655953434092396,
+    0,
+    253.00529517140902
+   ],
+   "r": [
+    0,
+    0,
+    0
+   ],
+   "s": [
+    1,
+    1,
+    1
+   ],
+   "seed": 0.9954516683843098
+  },
+  {
+   "type": "locomotiva",
+   "cat": "Modais",
+   "name": "Locomotiva 1",
+   "p": [
+    149,
+    0,
+    48
+   ],
+   "r": [
+    0,
+    0,
+    0
+   ],
+   "s": [
+    0.74,
+    0.74,
+    0.74
+   ],
+   "locked": true
+  },
+  {
+   "type": "vagao",
+   "cat": "Modais",
+   "name": "Vagão-tanque 1",
+   "p": [
+    148.82717532989963,
+    0,
+    29.390674321816032
+   ],
+   "r": [
+    0,
+    0,
+    0
+   ],
+   "s": [
+    0.73,
+    0.73,
+    0.73
+   ]
+  },
+  {
+   "type": "vagas",
+   "cat": "Pátio",
+   "name": "Marcação de vagas 1",
+   "p": [
+    -102.60116983636578,
+    0,
+    27.75
+   ],
+   "r": [
+    0,
+    -1.5707963267948966,
+    0
+   ],
+   "s": [
+    1,
+    1,
+    1
+   ]
+  },
+  {
+   "type": "grade",
+   "cat": "Perímetro",
+   "name": "Grade (cerca alta) 1",
+   "p": [
+    -126.7995923947185,
+    0,
+    145.3719687608097
+   ],
+   "r": [
+    0,
+    0.03490658503988659,
+    0
+   ],
+   "s": [
+    1,
+    1,
+    1
+   ]
+  },
+  {
+   "type": "grade",
+   "cat": "Perímetro",
+   "name": "Grade (cerca alta) 1 (cópia)",
+   "p": [
+    -146,
+    0,
+    166
+   ],
+   "r": [
+    0,
+    1.5708,
+    0
+   ],
+   "s": [
+    1,
+    1,
+    1
+   ]
+  },
+  {
+   "type": "grade",
+   "cat": "Perímetro",
+   "name": "Grade (cerca alta) 1 (cópia) (cópia)",
+   "p": [
+    -146,
+    0,
+    206
+   ],
+   "r": [
+    0,
+    1.5708,
+    0
+   ],
+   "s": [
+    1,
+    1,
+    1
+   ]
+  },
+  {
+   "type": "grade",
+   "cat": "Perímetro",
+   "name": "Grade (cerca alta) 1 (cópia) (cópia) (cópia)",
+   "p": [
+    -146,
+    0,
+    246
+   ],
+   "r": [
+    0,
+    1.5708,
+    0
+   ],
+   "s": [
+    1,
+    1,
+    1
+   ]
+  },
+  {
+   "type": "grade",
+   "cat": "Perímetro",
+   "name": "Grade (cerca alta) 1 (cópia) (cópia)",
+   "p": [
+    -127.04678581301229,
+    0,
+    100.29146867601703
+   ],
+   "r": [
+    -3.141592653589793,
+    -0.03490658503988659,
+    -3.141592653589793
+   ],
+   "s": [
+    1,
+    1,
+    1
+   ]
+  },
+  {
+   "type": "grade",
+   "cat": "Perímetro",
+   "name": "Grade (cerca alta) 1 (cópia) (cópia)",
+   "p": [
+    -79.87,
+    0,
+    78.2914
+   ],
+   "r": [
+    0,
+    1.5708,
+    0
+   ],
+   "s": [
+    1,
+    1,
+    1
+   ]
+  },
+  {
+   "type": "grade",
+   "cat": "Perímetro",
+   "name": "Grade (cerca alta) 1 (cópia)",
+   "p": [
+    -91.26384876721154,
+    0,
+    98.28344945189878
+   ],
+   "r": [
+    0,
+    0.03490658503988659,
+    0
+   ],
+   "s": [
+    0.55,
+    1,
+    1
+   ]
+  },
+  {
+   "type": "grade",
+   "cat": "Perímetro",
+   "name": "Grade (cerca alta) 1 (cópia) (cópia) (cópia) (cópia)",
+   "p": [
+    -79.87,
+    0,
+    -1.7086
+   ],
+   "r": [
+    0,
+    1.5708,
+    0
+   ],
+   "s": [
+    1,
+    1,
+    1
+   ]
+  },
+  {
+   "type": "grade",
+   "cat": "Perímetro",
+   "name": "Grade (cerca alta) 1 (cópia) (cópia) (cópia) (cópia) (cópia)",
+   "p": [
+    -79.87,
+    0,
+    -41.7086
+   ],
+   "r": [
+    0,
+    1.5708,
+    0
+   ],
+   "s": [
+    1,
+    1,
+    1
+   ]
+  },
+  {
+   "type": "vagao",
+   "cat": "Modais",
+   "name": "Vagão-tanque 1 (cópia) (cópia) (cópia) (cópia) (cópia)",
+   "p": [
+    148.5512257545183,
+    0,
+    -70.67805968475506
+   ],
+   "r": [
+    0,
+    0,
+    0
+   ],
+   "s": [
+    0.88,
+    0.88,
+    0.88
+   ]
+  },
+  {
+   "type": "vagao",
+   "cat": "Modais",
+   "name": "Vagão-tanque 1 (cópia) (cópia) (cópia) (cópia) (cópia) (cópia)",
+   "p": [
+    148.49760263033033,
+    0,
+    -90.13524188898842
+   ],
+   "r": [
+    0,
+    0,
+    0
+   ],
+   "s": [
+    0.88,
+    0.88,
+    0.88
+   ]
+  },
+  {
+   "type": "vagao",
+   "cat": "Modais",
+   "name": "Vagão-tanque 1 (cópia)",
+   "p": [
+    149.0213234112211,
+    0,
+    12.588048172754569
+   ],
+   "r": [
+    0,
+    0,
+    0
+   ],
+   "s": [
+    0.73,
+    0.73,
+    0.73
+   ]
+  },
+  {
+   "type": "vagao",
+   "cat": "Modais",
+   "name": "Vagão-tanque 1 (cópia) (cópia)",
+   "p": [
+    148.86542260690558,
+    0,
+    -4.0629601879107256
+   ],
+   "r": [
+    0,
+    0,
+    0
+   ],
+   "s": [
+    0.73,
+    0.73,
+    0.73
+   ]
+  },
+  {
+   "type": "vagao",
+   "cat": "Modais",
+   "name": "Vagão-tanque 1 (cópia) (cópia) (cópia)",
+   "p": [
+    149.32106096656878,
+    0,
+    -20.161720612028088
+   ],
+   "r": [
+    0,
+    0,
+    0
+   ],
+   "s": [
+    0.73,
+    0.73,
+    0.73
+   ]
+  },
+  {
+   "type": "vagao",
+   "cat": "Modais",
+   "name": "Vagão-tanque 1 (cópia) (cópia) (cópia) (cópia)",
+   "p": [
+    149.25942716332457,
+    0,
+    -36.144012119391405
+   ],
+   "r": [
+    0,
+    0,
+    0
+   ],
+   "s": [
+    0.73,
+    0.73,
+    0.73
+   ]
+  },
+  {
+   "type": "vagao",
+   "cat": "Modais",
+   "name": "Vagão-tanque 1 (cópia) (cópia) (cópia) (cópia) (cópia)",
+   "p": [
+    149.53747694933557,
+    0,
+    -52.518173524483494
+   ],
+   "r": [
+    0,
+    0,
+    0
+   ],
+   "s": [
+    0.73,
+    0.73,
+    0.73
+   ]
+  },
+  {
+   "type": "parque_tanques",
+   "cat": "Tancagem",
+   "name": "Parque de tanques 1 (cópia)",
+   "p": [
+    89.52512555985876,
+    0,
+    -19.755629498366844
+   ],
+   "r": [
+    0,
+    0,
+    0
+   ],
+   "s": [
+    0.71,
+    0.95,
+    0.71
+   ],
+   "locked": true
+  },
+  {
+   "type": "parque_tanques",
+   "cat": "Tancagem",
+   "name": "Parque de tanques 1 (cópia) (cópia)",
+   "p": [
+    20.813353118383844,
+    0,
+    -20.024076951591443
+   ],
+   "r": [
+    0,
+    0,
+    0
+   ],
+   "s": [
+    0.71,
+    0.95,
+    0.71
+   ]
+  },
+  {
+   "type": "bacia",
+   "cat": "Tancagem",
+   "name": "Bacia 4 (cópia) (cópia)",
+   "p": [
+    45.4972070693111,
+    0,
+    -63.70284104381635
+   ],
+   "r": [
+    0,
+    0,
+    0
+   ],
+   "s": [
+    2.65,
+    0.1,
+    2.1
+   ],
+   "color": 10395294,
+   "texture": "concrete",
+   "alpha": 0.7,
+   "locked": true
+  },
+  {
+   "type": "bacia",
+   "cat": "Tancagem",
+   "name": "Bacia 9",
+   "p": [
+    30,
+    -1,
+    125
+   ],
+   "r": [
+    0,
+    0,
+    0
+   ],
+   "s": [
+    3,
+    1,
+    2.75
+   ],
+   "color": 16447993,
+   "texture": "asphalt-clean",
+   "alpha": 0.4,
+   "locked": true
+  },
+  {
+   "type": "vagas",
+   "cat": "Pátio",
+   "name": "Marcação de vagas 1 (cópia)",
+   "p": [
+    -109,
+    0,
+    73.25
+   ],
+   "r": [
+    0,
+    -1.5707963267948966,
+    0
+   ],
+   "s": [
+    1,
+    1,
+    1
+   ]
+  },
+  {
+   "type": "grade",
+   "cat": "Perímetro",
+   "name": "Grade (cerca alta) 1 (cópia) (cópia) (cópia)",
+   "p": [
+    -79.87,
+    0,
+    38.2914
+   ],
+   "r": [
+    0,
+    1.5708,
+    0
+   ],
+   "s": [
+    1,
+    1,
+    1
+   ]
+  },
+  {
+   "type": "grade",
+   "cat": "Perímetro",
+   "name": "Grade (cerca alta) 1 (cópia) (cópia) (cópia) (cópia) (cópia) (cópia)",
+   "p": [
+    -79.87,
+    0,
+    -81.7086
+   ],
+   "r": [
+    0,
+    1.5708,
+    0
+   ],
+   "s": [
+    1,
+    1,
+    1
+   ]
+  },
+  {
+   "type": "grade",
+   "cat": "Perímetro",
+   "name": "Grade (cerca alta) 1 (cópia) (cópia) (cópia) (cópia) (cópia) (cópia) (cópia)",
+   "p": [
+    -79.87,
+    0,
+    -121.7086
+   ],
+   "r": [
+    0,
+    1.5708,
+    0
+   ],
+   "s": [
+    1,
+    1,
+    1
+   ]
+  },
+  {
+   "type": "arbusto_quadrado",
+   "cat": "Paisagismo",
+   "name": "Arbusto quadrado 1",
+   "p": [
+    -67,
+    0,
+    19
+   ],
+   "r": [
+    0,
+    0,
+    0
+   ],
+   "s": [
+    2.18,
+    1.5,
+    2.18
+   ],
+   "seed": 0.9312774944155333
+  },
+  {
+   "type": "arbusto_quadrado",
+   "cat": "Paisagismo",
+   "name": "Arbusto quadrado 1 (cópia)",
+   "p": [
+    -72,
+    0,
+    19
+   ],
+   "r": [
+    0,
+    0,
+    0
+   ],
+   "s": [
+    2.18,
+    1.5,
+    2.18
+   ],
+   "seed": 0.33002592120246665
+  },
+  {
+   "type": "canteiro",
+   "cat": "Paisagismo",
+   "name": "Canteiro 1 (cópia)",
+   "p": [
+    -46.408444153505705,
+    0,
+    -2.469358569345429
+   ],
+   "r": [
+    0,
+    1.5707963267948966,
+    0
+   ],
+   "s": [
+    1.62,
+    1.62,
+    1.2
+   ]
+  },
+  {
+   "type": "cabine_vistoria",
+   "cat": "Pátio",
+   "name": "Cabine de vistoria 1",
+   "p": [
+    22,
+    0,
+    117
+   ],
+   "r": [
+    0,
+    0,
+    0
+   ],
+   "s": [
+    1.37,
+    1.3,
+    1.37
+   ]
+  },
+  {
+   "type": "cabine_vistoria",
+   "cat": "Pátio",
+   "name": "Cabine de vistoria 1 (cópia)",
+   "p": [
+    -16,
+    0,
+    73
+   ],
+   "r": [
+    0,
+    0,
+    0
+   ],
+   "s": [
+    1.37,
+    1.35,
+    1.37
+   ]
+  },
+  {
+   "type": "arbusto_quadrado",
+   "cat": "Paisagismo",
+   "name": "Arbusto quadrado 1 (cópia) (cópia)",
+   "p": [
+    -47,
+    0,
+    12
+   ],
+   "r": [
+    0,
+    0,
+    0
+   ],
+   "s": [
+    2.18,
+    1.5,
+    2.18
+   ],
+   "seed": 0.3051144399330675
+  },
+  {
+   "type": "arbusto_quadrado",
+   "cat": "Paisagismo",
+   "name": "Arbusto quadrado 1 (cópia) (cópia) (cópia)",
+   "p": [
+    -47,
+    0,
+    16
+   ],
+   "r": [
+    0,
+    0,
+    0
+   ],
+   "s": [
+    2.18,
+    1.5,
+    2.18
+   ],
+   "seed": 0.9229028892794918
+  },
+  {
+   "type": "arbusto_quadrado",
+   "cat": "Paisagismo",
+   "name": "Arbusto quadrado 1 (cópia) (cópia) (cópia)",
+   "p": [
+    -47,
+    0,
+    7
+   ],
+   "r": [
+    0,
+    0,
+    0
+   ],
+   "s": [
+    2.18,
+    1.5,
+    2.18
+   ],
+   "seed": 0.9912661993745335
+  },
+  {
+   "type": "arbusto_quadrado",
+   "cat": "Paisagismo",
+   "name": "Arbusto quadrado 1 (cópia) (cópia) (cópia)",
+   "p": [
+    -47,
+    0,
+    -12
+   ],
+   "r": [
+    0,
+    0,
+    0
+   ],
+   "s": [
+    2.18,
+    1.5,
+    2.18
+   ],
+   "seed": 0.046609003178524344
+  },
+  {
+   "type": "arbusto_quadrado",
+   "cat": "Paisagismo",
+   "name": "Arbusto quadrado 1 (cópia) (cópia) (cópia) (cópia)",
+   "p": [
+    -46.78633542370773,
+    0,
+    -16.860155808238993
+   ],
+   "r": [
+    0,
+    0,
+    0
+   ],
+   "s": [
+    2.18,
+    1.5,
+    2.18
+   ],
+   "seed": 0.42203386928497233
+  },
+  {
+   "type": "arbusto_quadrado",
+   "cat": "Paisagismo",
+   "name": "Arbusto quadrado 1 (cópia) (cópia) (cópia) (cópia) (cópia)",
+   "p": [
+    -47,
+    0,
+    -22
+   ],
+   "r": [
+    0,
+    0,
+    0
+   ],
+   "s": [
+    2.18,
+    1.5,
+    2.18
+   ],
+   "seed": 0.14164711591327972
+  },
+  {
+   "type": "arbusto_quadrado",
+   "cat": "Paisagismo",
+   "name": "Arbusto quadrado 1 (cópia) (cópia) (cópia) (cópia) (cópia) (cópia)",
+   "p": [
+    -47,
+    0,
+    -27
+   ],
+   "r": [
+    0,
+    0,
+    0
+   ],
+   "s": [
+    2.18,
+    1.5,
+    2.18
+   ],
+   "seed": 0.21175869112501156
+  },
+  {
+   "type": "arbusto_quadrado",
+   "cat": "Paisagismo",
+   "name": "Arbusto quadrado 1 (cópia)",
+   "p": [
+    -57,
+    0,
+    19
+   ],
+   "r": [
+    0,
+    0,
+    0
+   ],
+   "s": [
+    2.18,
+    1.5,
+    2.18
+   ],
+   "seed": 0.1427369765195674
+  },
+  {
+   "type": "arbusto_quadrado",
+   "cat": "Paisagismo",
+   "name": "Arbusto quadrado 1 (cópia) (cópia)",
+   "p": [
+    -62,
+    0,
+    19
+   ],
+   "r": [
+    0,
+    0,
+    0
+   ],
+   "s": [
+    2.18,
+    1.5,
+    2.18
+   ],
+   "seed": 0.609847666683791
+  },
+  {
+   "type": "arbusto_quadrado",
+   "cat": "Paisagismo",
+   "name": "Arbusto quadrado 1 (cópia) (cópia)",
+   "p": [
+    -52,
+    0,
+    19
+   ],
+   "r": [
+    0,
+    0,
+    0
+   ],
+   "s": [
+    2.18,
+    1.5,
+    2.18
+   ],
+   "seed": 0.2523220260942278
+  },
+  {
+   "type": "arbusto_quadrado",
+   "cat": "Paisagismo",
+   "name": "Arbusto quadrado 1 (cópia) (cópia) (cópia) (cópia)",
+   "p": [
+    -47,
+    0,
+    19
+   ],
+   "r": [
+    0,
+    0,
+    0
+   ],
+   "s": [
+    2.18,
+    1.5,
+    2.18
+   ],
+   "seed": 0.9437568160026674
+  },
+  {
+   "type": "arbusto",
+   "cat": "Paisagismo",
+   "name": "Arbusto 1 (cópia) (cópia) (cópia) (cópia) (cópia) (cópia) (cópia) (cópia) (cópia) (cópia) (cópia) (cópia) (cópia) (cópia) (cópia) (cópia) (cópia)",
+   "p": [
+    -103.33824921657619,
+    0,
+    159.72071685980563
+   ],
+   "r": [
+    0,
+    0,
+    0
+   ],
+   "s": [
+    0.71,
+    0.71,
+    0.71
+   ],
+   "color": 6602794,
+   "seed": 0.47664750378209764
+  },
+  {
+   "type": "arbusto",
+   "cat": "Paisagismo",
+   "name": "Arbusto 1 (cópia) (cópia) (cópia) (cópia) (cópia) (cópia) (cópia) (cópia) (cópia) (cópia) (cópia) (cópia) (cópia) (cópia) (cópia) (cópia) (cópia)",
+   "p": [
+    -125.58113930817112,
+    0,
+    189.8740201090484
+   ],
+   "r": [
+    0,
+    0,
+    0
+   ],
+   "s": [
+    0.71,
+    0.71,
+    0.71
+   ],
+   "color": 6602794,
+   "seed": 0.4185788546333685
+  },
+  {
+   "type": "canteiro",
+   "cat": "Paisagismo",
+   "name": "Canteiro 2",
+   "p": [
+    -146,
+    -0.2,
+    126
+   ],
+   "r": [
+    0,
+    0,
+    0
+   ],
+   "s": [
+    0.4,
+    1,
+    1
+   ]
+  },
+  {
+   "type": "canteiro",
+   "cat": "Paisagismo",
+   "name": "Canteiro 2 (cópia)",
+   "p": [
+    -146,
+    -0.2,
+    117
+   ],
+   "r": [
+    0,
+    0,
+    0
+   ],
+   "s": [
+    0.4,
+    1,
+    1
+   ]
+  },
+  {
+   "type": "arvore",
+   "cat": "Paisagismo",
+   "name": "Árvore alameda S2",
+   "p": [
+    -146.4,
+    0,
+    12.9
+   ],
+   "r": [
+    0,
+    2.8,
+    0
+   ],
+   "s": [
+    0.59,
+    0.59,
+    0.59
+   ],
+   "seed": 0.51
+  },
+  {
+   "type": "arvore",
+   "cat": "Paisagismo",
+   "name": "Árvore alameda S3",
+   "p": [
+    -146.3,
+    0,
+    5.6
+   ],
+   "r": [
+    0,
+    0.4,
+    0
+   ],
+   "s": [
+    0.59,
+    0.59,
+    0.59
+   ],
+   "seed": 0.77
+  },
+  {
+   "type": "arvore",
+   "cat": "Paisagismo",
+   "name": "Árvore alameda S4",
+   "p": [
+    -146.4,
+    0,
+    -1.7
+   ],
+   "r": [
+    0,
+    3.6,
+    0
+   ],
+   "s": [
+    0.59,
+    0.59,
+    0.59
+   ],
+   "seed": 0.4
+  },
+  {
+   "type": "arvore",
+   "cat": "Paisagismo",
+   "name": "Árvore alameda S5",
+   "p": [
+    -146.3,
+    0,
+    -9
+   ],
+   "r": [
+    0,
+    5.1,
+    0
+   ],
+   "s": [
+    0.59,
+    0.59,
+    0.59
+   ],
+   "seed": 0.66
+  },
+  {
+   "type": "poste_luz",
+   "cat": "Perímetro",
+   "name": "Poste de luz 1",
+   "p": [
+    129.89070480083248,
+    0,
+    26.636074573441228
+   ],
+   "r": [
+    0,
+    -3.141592653589793,
+    0
+   ],
+   "s": [
+    0.73,
+    0.73,
+    0.73
+   ]
+  },
+  {
+   "type": "balanca",
+   "cat": "Pátio",
+   "name": "Balança de pesagem 1 (cópia)",
+   "p": [
+    33,
+    1,
+    129.5
+   ],
+   "r": [
+    0,
+    -1.5707963267948966,
+    0
+   ],
+   "s": [
+    2.2,
+    1.6,
+    1
+   ]
+  },
+  {
+   "type": "arvore",
+   "cat": "Paisagismo",
+   "name": "Árvore 8 (cópia) (cópia) (cópia) (cópia) (cópia)",
+   "p": [
+    -145.67445092747042,
+    0,
+    121.47499411096713
+   ],
+   "r": [
+    0,
+    0,
+    0
+   ],
+   "s": [
+    0.59,
+    0.59,
+    0.59
+   ],
+   "seed": 0.05254075324884444
+  },
+  {
+   "type": "poste_luz",
+   "cat": "Perímetro",
+   "name": "Poste de luz 1 (cópia)",
+   "p": [
+    -47,
+    0,
+    180
+   ],
+   "r": [
+    3.141592653589793,
+    1.5707963267948966,
+    3.141592653589793
+   ],
+   "s": [
+    0.73,
+    0.73,
+    0.73
+   ]
+  },
+  {
+   "type": "poste_luz",
+   "cat": "Perímetro",
+   "name": "Poste de luz 1 (cópia) (cópia)",
+   "p": [
+    133.71974213391758,
+    0,
+    139.55598310865977
+   ],
+   "r": [
+    3.141592653589793,
+    0,
+    3.141592653589793
+   ],
+   "s": [
+    0.73,
+    0.73,
+    0.73
+   ]
+  },
+  {
+   "type": "poste_luz",
+   "cat": "Perímetro",
+   "name": "Poste de luz 1 (cópia) (cópia)",
+   "p": [
+    27,
+    0,
+    180
+   ],
+   "r": [
+    -2.449293598294706e-16,
+    1.5707963267948966,
+    0
+   ],
+   "s": [
+    0.73,
+    0.73,
+    0.73
+   ]
+  },
+  {
+   "type": "poste_luz",
+   "cat": "Perímetro",
+   "name": "Poste de luz 1 (cópia) (cópia) (cópia)",
+   "p": [
+    84,
+    0,
+    180
+   ],
+   "r": [
+    -2.449293598294706e-16,
+    1.5707963267948966,
+    0
+   ],
+   "s": [
+    0.73,
+    0.73,
+    0.73
+   ]
+  },
+  {
+   "type": "poste_luz",
+   "cat": "Perímetro",
+   "name": "Poste de luz 1 (cópia) (cópia) (cópia) (cópia)",
+   "p": [
+    130,
+    0,
+    180
+   ],
+   "r": [
+    -2.449293598294706e-16,
+    -3.141592653589793,
+    0
+   ],
+   "s": [
+    0.73,
+    0.73,
+    0.73
+   ]
+  },
+  {
+   "type": "poste_luz",
+   "cat": "Perímetro",
+   "name": "Poste de luz 1 (cópia) (cópia) (cópia)",
+   "p": [
+    -88.28846398713983,
+    0,
+    40.20060167596159
+   ],
+   "r": [
+    3.141592653589793,
+    0,
+    3.141592653589793
+   ],
+   "s": [
+    0.73,
+    0.73,
+    0.73
+   ]
+  },
+  {
+   "type": "poste_luz",
+   "cat": "Perímetro",
+   "name": "Poste de luz 1 (cópia) (cópia) (cópia) (cópia)",
+   "p": [
+    -88,
+    0,
+    10
+   ],
+   "r": [
+    3.141592653589793,
+    0,
+    3.141592653589793
+   ],
+   "s": [
+    0.73,
+    0.73,
+    0.73
+   ]
+  },
+  {
+   "type": "poste_luz",
+   "cat": "Perímetro",
+   "name": "Poste de luz 1 (cópia) (cópia) (cópia) (cópia) (cópia)",
+   "p": [
+    -88,
+    0,
+    -20
+   ],
+   "r": [
+    3.141592653589793,
+    0,
+    3.141592653589793
+   ],
+   "s": [
+    0.73,
+    0.73,
+    0.73
+   ]
+  },
+  {
+   "type": "caminhao_fuel_estatico",
+   "cat": "Frota",
+   "name": "Fuel Truck Style Adapted 1",
+   "p": [
+    -103.621,
+    0,
+    70
+   ],
+   "r": [
+    0,
+    -1.5707963267948966,
+    0
+   ],
+   "s": [
+    1.29,
+    1.29,
+    1.29
+   ],
+   "truckSkin": ""
+  },
+  {
+   "type": "caminhao_fuel_estatico",
+   "cat": "Frota",
+   "name": "Fuel Truck Style Adapted 1 (cópia)",
+   "p": [
+    -97.222,
+    0,
+    31
+   ],
+   "r": [
+    0,
+    -1.5707963267948966,
+    0
+   ],
+   "s": [
+    1.29,
+    1.29,
+    1.29
+   ],
+   "truckSkin": "black"
+  },
+  {
+   "type": "caminhao_fuel_estatico",
+   "cat": "Frota",
+   "name": "Fuel Truck Style Adapted 1 (cópia) (cópia)",
+   "p": [
+    -97.222,
+    0,
+    18
+   ],
+   "r": [
+    0,
+    -1.5707963267948966,
+    0
+   ],
+   "s": [
+    1.29,
+    1.29,
+    1.29
+   ],
+   "truckSkin": ""
+  },
+  {
+   "type": "caminhao_fuel_estatico",
+   "cat": "Frota",
+   "name": "Fuel Truck Style Adapted 1 (cópia) (cópia)",
+   "p": [
+    -103.621,
+    0,
+    89.5
+   ],
+   "r": [
+    0,
+    -1.5707963267948966,
+    0
+   ],
+   "s": [
+    1.29,
+    1.29,
+    1.29
+   ],
+   "truckSkin": "black"
+  },
+  {
+   "type": "caminhao_animado",
+   "cat": "Frota",
+   "name": "Caminhão (rota animada) 1",
+   "p": [
+    0,
+    1,
+    0
+   ],
+   "r": [
+    0,
+    0,
+    0
+   ],
+   "s": [
+    1.3,
+    1.3,
+    1.3
+   ],
+   "rota": {
+    "points": [
+     [
+      -104.5557046266274,
+      43.39159079024126
+     ],
+     [
+      -161.432565024984,
+      42.17646754258328
+     ],
+     [
+      -161.6916246211739,
+      134.25319691930528
+     ],
+     [
+      -124.45212915322759,
+      133.07622494275387
+     ],
+     [
+      40.4104299069711,
+      130.2488803036935
+     ],
+     [
+      86.73259563817794,
+      125.23250687411927
+     ],
+     [
+      113.76361323899027,
+      101.4228719710423
+     ],
+     [
+      108.74410075341024,
+      75.61346583593966
+     ],
+     [
+      52.857125713909795,
+      53.30033553294859
+     ],
+     [
+      -4.904778952852553,
+      58.543368393595145
+     ],
+     [
+      -31.307974759156366,
+      63.89696919473635
+     ],
+     [
+      -57.0,
+      79.5
+     ],
+     [
+      -57.91292936419535,
+      105.40986853788274
+     ],
+     [
+      -87.4052443536554,
+      105.55507657592014
+     ],
+     [
+      -130.0,
+      109.5
+     ],
+     [
+      -156.08390725191526,
+      107.20858571273183
+     ],
+     [
+      -166.6892040825487,
+      233.15718809840018
+     ]
+    ],
+    "closed": false,
+    "waits": [
+     0,
+     0,
+     0,
+     3,
+     3,
+     0,
+     3,
+     0,
+     3,
+     3,
+     0,
+     0,
+     0,
+     3,
+     0,
+     0,
+     0
+    ],
+    "model": "fuel",
+    "skin": ""
+   }
+  },
+  {
+   "type": "lib_plants/bush-realista",
+   "cat": "plants",
+   "name": "Arbusto (realista) 1",
+   "p": [
+    -92,
+    -1,
+    167
+   ],
+   "r": [
+    0,
+    0,
+    0
+   ],
+   "s": [
+    2.96,
+    2.96,
+    2.96
+   ],
+   "color": 5349451
+  },
+  {
+   "type": "lib_plants/bush-realista",
+   "cat": "plants",
+   "name": "Arbusto (realista) 1 (cópia)",
+   "p": [
+    -93.78556597201067,
+    -1,
+    158.46572440089346
+   ],
+   "r": [
+    0,
+    0,
+    0
+   ],
+   "s": [
+    2.96,
+    2.96,
+    2.96
+   ],
+   "color": 5349451
+  },
+  {
+   "type": "lib_plants/bush-realista",
+   "cat": "plants",
+   "name": "Arbusto (realista) 1 (cópia)",
+   "p": [
+    -102.17330788514995,
+    -0.3,
+    171.1577624895776
+   ],
+   "r": [
+    0,
+    0,
+    0
+   ],
+   "s": [
+    1.79,
+    1.79,
+    1.79
+   ],
+   "color": 5349451
+  },
+  {
+   "type": "lib_plants/bush-realista",
+   "cat": "plants",
+   "name": "Arbusto (realista) 1 (cópia) (cópia)",
+   "p": [
+    -103.92339131718067,
+    -0.3,
+    160.67488189191354
+   ],
+   "r": [
+    0,
+    0,
+    0
+   ],
+   "s": [
+    1.79,
+    1.79,
+    1.79
+   ],
+   "color": 5349451
+  },
+  {
+   "type": "lib_plants/bush-realista",
+   "cat": "plants",
+   "name": "Arbusto (realista) 1 (cópia)",
+   "p": [
+    -96.71697994341929,
+    -1,
+    197.27467647418428
+   ],
+   "r": [
+    0,
+    -1.4835298641951802,
+    0
+   ],
+   "s": [
+    2.96,
+    2.96,
+    2.96
+   ],
+   "color": 5349451
+  },
+  {
+   "type": "lib_plants/bush-realista",
+   "cat": "plants",
+   "name": "Arbusto (realista) 1 (cópia) (cópia)",
+   "p": [
+    -91.1761111473728,
+    -1,
+    208.02008660179226
+   ],
+   "r": [
+    0,
+    -1.483529864195179,
+    0
+   ],
+   "s": [
+    2.96,
+    2.96,
+    2.96
+   ],
+   "color": 5349451
+  },
+  {
+   "type": "lib_plants/bush-realista",
+   "cat": "plants",
+   "name": "Arbusto (realista) 1 (cópia) (cópia)",
+   "p": [
+    -85.25316483365754,
+    -1,
+    223.73378073773623
+   ],
+   "r": [
+    0,
+    -1.483529864195179,
+    0
+   ],
+   "s": [
+    2.96,
+    2.96,
+    2.96
+   ],
+   "color": 5349451
+  },
+  {
+   "type": "lib_plants/bush-realista",
+   "cat": "plants",
+   "name": "Arbusto (realista) 1 (cópia) (cópia)",
+   "p": [
+    -125.59484586749068,
+    -0.3,
+    190.1664868894762
+   ],
+   "r": [
+    0,
+    0,
+    0
+   ],
+   "s": [
+    1.79,
+    1.79,
+    1.79
+   ],
+   "color": 5349451
+  },
+  {
+   "type": "lib_plants/bush-realista",
+   "cat": "plants",
+   "name": "Arbusto (realista) 1 (cópia) (cópia) (cópia)",
+   "p": [
+    -109.59484586749068,
+    -0.3,
+    190.1664868894762
+   ],
+   "r": [
+    0,
+    0,
+    0
+   ],
+   "s": [
+    1.79,
+    1.79,
+    1.79
+   ],
+   "color": 5349451
+  },
+  {
+   "type": "lib_plants/bush-realista",
+   "cat": "plants",
+   "name": "Arbusto (realista) 1 (cópia) (cópia) (cópia)",
+   "p": [
+    -80.17349650775691,
+    -0.3,
+    115.97347784046002
+   ],
+   "r": [
+    0,
+    0,
+    0
+   ],
+   "s": [
+    1.79,
+    1.79,
+    1.79
+   ],
+   "color": 5349451
+  },
+  {
+   "type": "lib_plants/bush-realista",
+   "cat": "plants",
+   "name": "Arbusto (realista) 1 (cópia) (cópia) (cópia) (cópia)",
+   "p": [
+    -79.97393471532065,
+    -0.3,
+    123.19937482356491
+   ],
+   "r": [
+    0,
+    0,
+    0
+   ],
+   "s": [
+    1.79,
+    1.79,
+    1.79
+   ],
+   "color": 5349451
+  },
+  {
+   "type": "lib_plants/bush-realista",
+   "cat": "plants",
+   "name": "Arbusto cerca 1",
+   "p": [
+    -82,
+    -0.3,
+    62
+   ],
+   "r": [
+    0,
+    0.3,
+    0
+   ],
+   "s": [
+    1.79,
+    1.79,
+    1.79
+   ],
+   "color": 5349451
+  },
+  {
+   "type": "lib_plants/bush-realista",
+   "cat": "plants",
+   "name": "Arbusto cerca 2",
+   "p": [
+    -82,
+    -0.3,
+    36
+   ],
+   "r": [
+    0,
+    1.7,
+    0
+   ],
+   "s": [
+    1.79,
+    1.79,
+    1.79
+   ],
+   "color": 5349451
+  },
+  {
+   "type": "lib_plants/bush-realista",
+   "cat": "plants",
+   "name": "Arbusto cerca 3",
+   "p": [
+    -82,
+    -0.3,
+    10
+   ],
+   "r": [
+    0,
+    2.9,
+    0
+   ],
+   "s": [
+    1.79,
+    1.79,
+    1.79
+   ],
+   "color": 5349451
+  },
+  {
+   "type": "lib_plants/bush-realista",
+   "cat": "plants",
+   "name": "Arbusto cerca 4",
+   "p": [
+    -82,
+    -0.3,
+    -18
+   ],
+   "r": [
+    0,
+    4.2,
+    0
+   ],
+   "s": [
+    1.79,
+    1.79,
+    1.79
+   ],
+   "color": 5349451
+  },
+  {
+   "type": "lib_plants/bush-realista",
+   "cat": "plants",
+   "name": "Arbusto cerca 5",
+   "p": [
+    -82,
+    -0.3,
+    -56
+   ],
+   "r": [
+    0,
+    0.9,
+    0
+   ],
+   "s": [
+    1.79,
+    1.79,
+    1.79
+   ],
+   "color": 5349451
+  },
+  {
+   "type": "lib_plants/bush-realista",
+   "cat": "plants",
+   "name": "Arbusto cerca 6",
+   "p": [
+    -82,
+    -0.3,
+    -96
+   ],
+   "r": [
+    0,
+    2.2,
+    0
+   ],
+   "s": [
+    1.79,
+    1.79,
+    1.79
+   ],
+   "color": 5349451
+  },
+  {
+   "type": "lib_plants/bush-realista",
+   "cat": "plants",
+   "name": "Arbusto norte 1",
+   "p": [
+    -28,
+    -1,
+    293
+   ],
+   "r": [
+    0,
+    0.5,
+    0
+   ],
+   "s": [
+    2.96,
+    2.96,
+    2.96
+   ],
+   "color": 5349451
+  },
+  {
+   "type": "lib_plants/bush-realista",
+   "cat": "plants",
+   "name": "Arbusto norte 2",
+   "p": [
+    42,
+    -0.3,
+    275
+   ],
+   "r": [
+    0,
+    1.6,
+    0
+   ],
+   "s": [
+    1.79,
+    1.79,
+    1.79
+   ],
+   "color": 5349451
+  },
+  {
+   "type": "lib_plants/bush-realista",
+   "cat": "plants",
+   "name": "Arbusto norte 3",
+   "p": [
+    -138,
+    -1,
+    215
+   ],
+   "r": [
+    0,
+    2.8,
+    0
+   ],
+   "s": [
+    2.96,
+    2.96,
+    2.96
+   ],
+   "color": 5349451
+  },
+  {
+   "type": "lib_plants/bush-realista",
+   "cat": "plants",
+   "name": "Arbusto norte 4",
+   "p": [
+    -139,
+    -0.3,
+    168
+   ],
+   "r": [
+    0,
+    3.7,
+    0
+   ],
+   "s": [
+    1.79,
+    1.79,
+    1.79
+   ],
+   "color": 5349451
+  },
+  {
+   "type": "lib_objects/tubulacao-detalhada",
+   "cat": "Tancagem",
+   "name": "Duto (detalhado) 1",
+   "p": [
+    -16.813116273361437,
+    1,
+    -39.472069946844925
+   ],
+   "r": [
+    0,
+    1.5707963267948966,
+    0
+   ],
+   "s": [
+    0.53,
+    0.7,
+    0.53
+   ],
+   "color": 10620944
+  },
+  {
+   "type": "lib_plants/arvore-grande",
+   "cat": "plants",
+   "name": "Árvore grande 1",
+   "p": [
+    -122,
+    0,
+    159
+   ],
+   "r": [
+    0,
+    0,
+    0
+   ],
+   "s": [
+    0.71,
+    0.71,
+    0.71
+   ],
+   "color": 16448250
+  },
+  {
+   "type": "lib_plants/arvore-grande",
+   "cat": "plants",
+   "name": "Árvore grande 1 (cópia)",
+   "p": [
+    -88.05151541250717,
+    0,
+    175.13331507942314
+   ],
+   "r": [
+    0,
+    0,
+    0
+   ],
+   "s": [
+    0.71,
+    0.71,
+    0.71
+   ],
+   "color": 16119285
+  },
+  {
+   "type": "lib_plants/arvore-grande",
+   "cat": "plants",
+   "name": "Árvore grande 1 (cópia) (cópia)",
+   "p": [
+    -97.82444734729354,
+    0,
+    201.22068389681408
+   ],
+   "r": [
+    0,
+    0,
+    0
+   ],
+   "s": [
+    0.71,
+    0.71,
+    0.71
+   ],
+   "color": 16777215
+  },
+  {
+   "type": "lib_plants/arvore-grande",
+   "cat": "plants",
+   "name": "Árvore grande 1 (cópia) (cópia) (cópia)",
+   "p": [
+    -122.91201209189447,
+    0,
+    230.49063199116424
+   ],
+   "r": [
+    0,
+    0,
+    0
+   ],
+   "s": [
+    0.71,
+    0.71,
+    0.71
+   ],
+   "color": 9437084
+  },
+  {
+   "type": "lib_plants/arvore-grande",
+   "cat": "plants",
+   "name": "Árvore grande 1 (cópia) (cópia) (cópia) (cópia)",
+   "p": [
+    -72.4674164938443,
+    0,
+    249.01669667536322
+   ],
+   "r": [
+    0,
+    0,
+    0
+   ],
+   "s": [
+    0.71,
+    0.71,
+    0.71
+   ],
+   "color": 16777215
+  },
+  {
+   "type": "lib_plants/arvore-grande",
+   "cat": "plants",
+   "name": "Árvore grande 1 (cópia) (cópia) (cópia) (cópia) (cópia)",
+   "p": [
+    12.004693141239187,
+    0,
+    241.75496389730571
+   ],
+   "r": [
+    0,
+    0,
+    0
+   ],
+   "s": [
+    0.71,
+    0.71,
+    0.71
+   ],
+   "color": 9437084
+  },
+  {
+   "type": "lib_plants/arvore-grande",
+   "cat": "plants",
+   "name": "Árvore grande 1 (cópia) (cópia) (cópia) (cópia) (cópia)",
+   "p": [
+    -53.020252926732624,
+    0,
+    270.95906207037694
+   ],
+   "r": [
+    0,
+    0,
+    0
+   ],
+   "s": [
+    0.71,
+    0.71,
+    0.71
+   ],
+   "color": 9437084
+  },
+  {
+   "type": "lib_plants/arvore-grande",
+   "cat": "plants",
+   "name": "Árvore grande 1 (cópia) (cópia) (cópia) (cópia) (cópia)",
+   "p": [
+    -115.59432248141007,
+    0,
+    275.0143138011522
+   ],
+   "r": [
+    0,
+    0,
+    0
+   ],
+   "s": [
+    0.71,
+    0.71,
+    0.71
+   ],
+   "color": 16777215
+  },
+  {
+   "type": "lib_plants/arvore-grande",
+   "cat": "plants",
+   "name": "Árvore grande 1 (cópia) (cópia) (cópia) (cópia) (cópia) (cópia)",
+   "p": [
+    -63.969314459650946,
+    0,
+    289.6525100201597
+   ],
+   "r": [
+    0,
+    0,
+    0
+   ],
+   "s": [
+    0.71,
+    0.71,
+    0.71
+   ],
+   "color": 16777215
+  },
+  {
+   "type": "lib_plants/arvore-grande",
+   "cat": "plants",
+   "name": "Árvore grande 1 (cópia) (cópia) (cópia) (cópia) (cópia) (cópia) (cópia)",
+   "p": [
+    -127,
+    0,
+    179
+   ],
+   "r": [
+    0,
+    0,
+    0
+   ],
+   "s": [
+    0.53,
+    0.53,
+    0.53
+   ],
+   "color": 16777215
+  },
+  {
+   "type": "lib_plants/arvore-grande",
+   "cat": "plants",
+   "name": "Árvore grande N1",
+   "p": [
+    -30,
+    0,
+    300
+   ],
+   "r": [
+    0,
+    0.7,
+    0
+   ],
+   "s": [
+    0.71,
+    0.71,
+    0.71
+   ],
+   "color": 9437084
+  },
+  {
+   "type": "lib_plants/arvore-grande",
+   "cat": "plants",
+   "name": "Árvore grande N2",
+   "p": [
+    35,
+    0,
+    282
+   ],
+   "r": [
+    0,
+    2.1,
+    0
+   ],
+   "s": [
+    0.71,
+    0.71,
+    0.71
+   ],
+   "color": 9437084
+  },
+  {
+   "type": "lib_plants/arvore-grande",
+   "cat": "plants",
+   "name": "Árvore grande N3",
+   "p": [
+    100,
+    0,
+    265
+   ],
+   "r": [
+    0,
+    3.9,
+    0
+   ],
+   "s": [
+    0.71,
+    0.71,
+    0.71
+   ],
+   "color": 9437084
+  },
+  {
+   "type": "lib_plants/arvore-grande",
+   "cat": "plants",
+   "name": "Árvore grande N4",
+   "p": [
+    -140,
+    0,
+    300
+   ],
+   "r": [
+    0,
+    1.3,
+    0
+   ],
+   "s": [
+    0.71,
+    0.71,
+    0.71
+   ],
+   "color": 9437084
+  },
+  {
+   "type": "lib_plants/arvore-grande",
+   "cat": "plants",
+   "name": "Árvore grande N5",
+   "p": [
+    120,
+    0,
+    300
+   ],
+   "r": [
+    0,
+    5,
+    0
+   ],
+   "s": [
+    0.71,
+    0.71,
+    0.71
+   ],
+   "color": 9437084
+  },
+  {
+   "type": "lib_plants/arvore-grande",
+   "cat": "plants",
+   "name": "Árvore grande N6",
+   "p": [
+    -175,
+    0,
+    270
+   ],
+   "r": [
+    0,
+    2.6,
+    0
+   ],
+   "s": [
+    0.71,
+    0.71,
+    0.71
+   ],
+   "color": 9437084
+  }
+ ],
+ "truckSkins": [
+  {
+   "id": "padrao",
+   "name": "Padrão",
+   "base": "fuel",
+   "skin": {
+    "logo": "/logo/logo-full-no-tagline.png",
+    "color": null,
+    "tankColor": "#e8e8e8",
+    "plate": null,
+    "size": 0.75,
+    "along": 0.25,
+    "around": 8,
+    "rotate": 0,
+    "flipH": false,
+    "flipV": false,
+    "paint": {
+     "h0": "#ba3b7f",
+     "h40": "#f0daad"
+    }
+   }
+  },
+  {
+   "id": "black",
+   "name": "Black",
+   "base": "fuel",
+   "skin": {
+    "logo": "/logo/logo-automind.png",
+    "color": null,
+    "tankColor": "#403f3f",
+    "plate": null,
+    "size": 0.75,
+    "along": 0.6,
+    "around": 8,
+    "rotate": 0,
+    "flipH": false,
+    "flipV": false,
+    "paint": {
+     "h0": "#ba3b7f",
+     "h40": "#f0daad"
+    }
+   }
+  }
+ ]
+}

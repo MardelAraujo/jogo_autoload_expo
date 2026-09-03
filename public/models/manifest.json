@@ -1,0 +1,416 @@
+{
+  "building/building-a": {
+    "name": "Building A",
+    "cat": "building",
+    "group": "estrutura",
+    "scale": 1,
+    "rotY": 0,
+    "builder": null,
+    "srcSha": "96890c7ec7aa6804058761ad56540e8d23438cb0bbbcbede4e2abe1180ef59ea"
+  },
+  "building/building-j": {
+    "name": "Building J",
+    "cat": "building",
+    "group": "estrutura",
+    "scale": 1,
+    "rotY": 0,
+    "builder": null,
+    "srcSha": "03628315bd99b18c9dd9d4441b1da98452d64ea3a7f61b6cbc87e40d6b3ccb7a"
+  },
+  "building/building-k": {
+    "name": "Building K",
+    "cat": "building",
+    "group": "estrutura",
+    "scale": 1,
+    "rotY": 0,
+    "builder": null,
+    "srcSha": "8bc93d882f1700faba0a3807b09049cef4c547e46853504cec65ffe452332c59"
+  },
+  "building/building-o": {
+    "name": "Building O",
+    "cat": "building",
+    "group": "estrutura",
+    "scale": 1,
+    "rotY": 0,
+    "builder": null,
+    "srcSha": "d7c96d7a749621caff8a7e2f550bd969fb3c062dec0e30f53128f258c7131323"
+  },
+  "objects/cancela": {
+    "name": "Cancela",
+    "cat": "objects",
+    "group": "objeto",
+    "scale": 1,
+    "rotY": 0,
+    "builder": "cancela",
+    "srcSha": "ec295f94cca952cfde78889e34595b8b38ea392c36592947fd5c59c5933b8425"
+  },
+  "objects/cone": {
+    "name": "Cone",
+    "cat": "objects",
+    "group": "objeto",
+    "scale": 1,
+    "rotY": 0,
+    "builder": null,
+    "srcSha": "ba947bd9fb987b764ee5a7cba9785f5e48571373078387f3143685c98a2071f9"
+  },
+  "objects/dutos": {
+    "name": "Dutos",
+    "cat": "objects",
+    "group": "objeto",
+    "scale": 1,
+    "rotY": 0,
+    "builder": "dutos",
+    "srcSha": "b95a321138e37970a6e6064b23e27585c6b4211bac2eaa70230814c4d36ec8c7"
+  },
+  "objects/grade": {
+    "name": "Grade (cerca alta)",
+    "cat": "objects",
+    "group": "objeto",
+    "scale": 1,
+    "rotY": 0,
+    "builder": "grade",
+    "srcSha": "9e29797fa2f65e44f844eaa872a8b53c8059f0a8a1d9837abe32ad1ac49dc5c0"
+  },
+  "objects/totem": {
+    "name": "Totem",
+    "cat": "objects",
+    "group": "objeto",
+    "scale": 1,
+    "rotY": 0,
+    "builder": "totem",
+    "srcSha": "eda08f19686ca830b078abba0691aee027d65fe71f197d1fec4ef150e5213bf1"
+  },
+  "objects/tubulacao-detalhada": {
+    "name": "Duto (detalhado)",
+    "cat": "Tancagem",
+    "group": "objeto",
+    "scale": 1,
+    "rotY": 0,
+    "builder": null,
+    "srcSha": "fb6f28d8025fafd2ae0d864a014c4d8a05bfc66b29429016487fde812e919a3a"
+  },
+  "objects/vagas": {
+    "name": "Marcação de vagas",
+    "cat": "objects",
+    "group": "objeto",
+    "scale": 1,
+    "rotY": 0,
+    "builder": "vagas",
+    "srcSha": "e2e126ce60acb25e1078cff4a6df3d5dfd67cc2339978efbec47f04be9cc5175"
+  },
+  "plants/arbusto": {
+    "name": "Arbusto",
+    "cat": "plants",
+    "group": "objeto",
+    "scale": 1,
+    "rotY": 0,
+    "builder": "arbusto",
+    "srcSha": "5dcc5512237d1f9fa14c2727f085247fcfcdd05f577b6487e06e302402115249"
+  },
+  "plants/arbusto-quadrado": {
+    "name": "Arbusto quadrado",
+    "cat": "plants",
+    "group": "objeto",
+    "scale": 1,
+    "rotY": 0,
+    "builder": "arbusto_quadrado",
+    "srcSha": "33a61c9346a6156bb83ac31be775c127f8cdd43a91e4e62f27ea6a0d38173b44"
+  },
+  "plants/arvore": {
+    "name": "Árvore",
+    "cat": "plants",
+    "group": "objeto",
+    "scale": 1,
+    "rotY": 0,
+    "builder": "arvore",
+    "srcSha": "33b6bcf22c45ad284f15e81e413f0eac098e4307769457c3e03f385cef6805bb"
+  },
+  "plants/arvore-grande": {
+    "name": "Árvore grande",
+    "cat": "plants",
+    "group": "planta",
+    "scale": 0.12,
+    "rotY": 0,
+    "builder": null,
+    "srcSha": "3337cfe14754162ec86f59afeba545c57b791475f710fe6876c7b62758ef41c3"
+  },
+  "plants/bosque-arvores": {
+    "name": "Bosque de árvores",
+    "cat": "plants",
+    "group": "planta",
+    "scale": 0.12,
+    "rotY": 0,
+    "builder": null,
+    "srcSha": "c277894709b85d5ad0fcbfb3b366045791801547ed2b1cf906ac21073131461b"
+  },
+  "plants/bush-realista": {
+    "name": "Arbusto (realista)",
+    "cat": "plants",
+    "group": "planta",
+    "scale": 1,
+    "rotY": 0,
+    "builder": null,
+    "srcSha": "742d3993737f85ecabc149586b61c8383ab42bc178cd621edeebc55af02a368b"
+  },
+  "plants/bush-simples": {
+    "name": "Arbusto",
+    "cat": "plants",
+    "group": "planta",
+    "scale": 1,
+    "rotY": 0,
+    "builder": null,
+    "srcSha": "0790f566b6cefb273814e854cb243955c4f3a67e110de27482275d2548d84d12"
+  },
+  "plants/canteiro": {
+    "name": "Canteiro",
+    "cat": "plants",
+    "group": "objeto",
+    "scale": 1,
+    "rotY": 0,
+    "builder": "canteiro",
+    "srcSha": "15c067908d21d5206d024f4b9c4766714ea2aeb1779960c3b7f53d5c1c165b10"
+  },
+  "plants/grass": {
+    "name": "Grass",
+    "cat": "plants",
+    "group": "planta",
+    "scale": 1,
+    "rotY": 0,
+    "builder": null,
+    "srcSha": "69dba5028d8ea4c23d29b23b7c5e3a10ff7766a86be18e1161f808bc2644890a"
+  },
+  "structures/bacia": {
+    "name": "Bacia",
+    "cat": "structures",
+    "group": "objeto",
+    "scale": 1,
+    "rotY": 0,
+    "builder": "bacia",
+    "srcSha": "fb0fa580c27489497a5f973b67d1f8c9dadec042f3a0006076bc6f5ada1e4c5e"
+  },
+  "structures/balanca": {
+    "name": "Balança de pesagem",
+    "cat": "structures",
+    "group": "objeto",
+    "scale": 1,
+    "rotY": 0,
+    "builder": "balanca",
+    "srcSha": "c0326ab33220eeb3e27b42291563c8dc3bbb2ff70764b16d92d4b807f34ec9d5"
+  },
+  "structures/cobertura": {
+    "name": "Plataforma de carga",
+    "cat": "structures",
+    "group": "objeto",
+    "scale": 1,
+    "rotY": 0,
+    "builder": "cobertura",
+    "srcSha": "32002ad5020820049748274ac3507d0dd2274978331feaee55177cb3bb8b57c9"
+  },
+  "structures/ferrovia": {
+    "name": "Via férrea",
+    "cat": "structures",
+    "group": "objeto",
+    "scale": 1,
+    "rotY": 0,
+    "builder": "ferrovia",
+    "srcSha": "94ec40a49923fd01b1fcd31ec42d10768cefdcbd076db2e4d1df35635199a274"
+  },
+  "structures/galpao": {
+    "name": "Galpão",
+    "cat": "structures",
+    "group": "objeto",
+    "scale": 1,
+    "rotY": 0,
+    "builder": "galpao",
+    "srcSha": "050a3c8dcc8a3ebf0e9f2ed7252fbc9b9ac759fd7cacc2a40ff4fa2ed31df9b9"
+  },
+  "structures/guarita": {
+    "name": "Guarita",
+    "cat": "structures",
+    "group": "objeto",
+    "scale": 1,
+    "rotY": 0,
+    "builder": "guarita",
+    "srcSha": "458ddb174e6248207f869b6239b26474e6aee3efa135d488632ae6d9f7349e6e"
+  },
+  "structures/parque-tanques": {
+    "name": "Parque de tanques",
+    "cat": "structures",
+    "group": "objeto",
+    "scale": 1,
+    "rotY": 0,
+    "builder": "parque_tanques",
+    "srcSha": "ee0f3180954b5234d4930c7e217eebe97615789aa5a6eb865a377a3ecb646b44"
+  },
+  "structures/pista": {
+    "name": "Pista",
+    "cat": "structures",
+    "group": "objeto",
+    "scale": 1,
+    "rotY": 0,
+    "builder": "pista",
+    "srcSha": "e53f57459fa6f1a804b4dac89cbe446ca0be719ed06293496ad8ff08a8bde96f"
+  },
+  "structures/portaria": {
+    "name": "Portaria",
+    "cat": "structures",
+    "group": "objeto",
+    "scale": 1,
+    "rotY": 0,
+    "builder": "portaria",
+    "srcSha": "f051a84803181cb2b92f13afbdbf4eeec5aba7c0fdacc588707e4e5091148d20"
+  },
+  "structures/portaria-pack": {
+    "name": "Portaria + cancelas",
+    "cat": "structures",
+    "group": "objeto",
+    "scale": 1,
+    "rotY": 0,
+    "builder": "portaria_pack",
+    "srcSha": "3d8036618c3c12bcc4c44ee0acad5e52a53da4cf0553b614fb3acd3e80765f9a"
+  },
+  "structures/predio": {
+    "name": "Prédio",
+    "cat": "structures",
+    "group": "objeto",
+    "scale": 1,
+    "rotY": 0,
+    "builder": "predio",
+    "srcSha": "0a022e21ed30c43ef72a338f767475863ed1701025340ab3fcc4523329e1c694"
+  },
+  "structures/tanque": {
+    "name": "Tanque",
+    "cat": "structures",
+    "group": "objeto",
+    "scale": 1,
+    "rotY": 0,
+    "builder": "tanque",
+    "srcSha": "5be5722c4956c8e9e70ea3fa6844999621dd92bdbe62d48b1eaed980d10642b6"
+  },
+  "structures/tanque-detalhado": {
+    "name": "Tanque de Armazenamento (detalhado)",
+    "cat": "Tancagem",
+    "group": "estrutura",
+    "scale": 1,
+    "rotY": 0,
+    "builder": null,
+    "srcSha": "7f421736b13359971cb1f6f26a8391e2e78b782668f89eba15e636c5d5df71db"
+  },
+  "structures/truck-center": {
+    "name": "Truck Center",
+    "cat": "structures",
+    "group": "objeto",
+    "scale": 1,
+    "rotY": 0,
+    "builder": "truck_center",
+    "srcSha": "9b42af46d5db95f06d3f1757c064e31056a73800f90a02d4fd93ff2f142eda97"
+  },
+  "structures/vistoria": {
+    "name": "Guarita de vistoria",
+    "cat": "structures",
+    "group": "objeto",
+    "scale": 1,
+    "rotY": 0,
+    "builder": "vistoria",
+    "srcSha": "01209e5fe19db7cd35554f17e7310ef1e84c8090c2a398e2df073913ee78bad7"
+  },
+  "trucks/delivery-flat": {
+    "name": "Delivery Flat",
+    "cat": "trucks",
+    "group": "veiculo",
+    "scale": 1,
+    "rotY": 0,
+    "builder": null,
+    "srcSha": "031d9377eb5ae6ed87ecf2e2088295803beebf063609ae16aa52f8bcd8ab4287"
+  },
+  "trucks/fuel-truck-classic": {
+    "name": "Fuel Truck Classic",
+    "cat": "trucks",
+    "group": "objeto",
+    "scale": 1,
+    "rotY": 0,
+    "builder": null,
+    "srcSha": "24cf13f1b394ec817c48461b48cd08c049d81b1f5d17cc70150a06812828a9d8"
+  },
+  "trucks/fuel-truck-industrial": {
+    "name": "Fuel Truck Industrial",
+    "cat": "trucks",
+    "group": "objeto",
+    "scale": 1,
+    "rotY": 0,
+    "builder": null,
+    "srcSha": "795cc86c95d7b1d302febeec0d03fb0ceb8bdac21b15d728387df08cb38f21a9"
+  },
+  "trucks/fuel-truck-style-adapted": {
+    "name": "Fuel Truck Style Adapted",
+    "cat": "trucks",
+    "group": "objeto",
+    "scale": 1,
+    "rotY": 0,
+    "builder": null,
+    "srcSha": "27e1be7ac8efdce2ee1091a1106e829fd4da017017e8e85a68e8f589475cff8a"
+  },
+  "trucks/truck-flat": {
+    "name": "Truck Flat",
+    "cat": "trucks",
+    "group": "veiculo",
+    "scale": 1,
+    "rotY": 0,
+    "builder": null,
+    "srcSha": "304751938a4dd4074c7670d228882b3aee0286bac7c3eaf190ae64650a621874"
+  },
+  "vehicles/caminhao": {
+    "name": "Caminhão",
+    "cat": "vehicles",
+    "group": "objeto",
+    "scale": 1,
+    "rotY": 0,
+    "builder": "caminhao",
+    "srcSha": "5328585b6492c3699a8460edbbf5b1222aa5fbcfd5804d7a2ad0a2eae23378b4"
+  },
+  "vehicles/carro": {
+    "name": "Carro",
+    "cat": "vehicles",
+    "group": "objeto",
+    "scale": 1,
+    "rotY": 0,
+    "builder": "carro",
+    "srcSha": "77f5bd173ef1e88d0bfc610e767478b4edca48d0a34ff7a3d49bb16310384a6f"
+  },
+  "vehicles/carros": {
+    "name": "Carros (grupo)",
+    "cat": "vehicles",
+    "group": "objeto",
+    "scale": 1,
+    "rotY": 0,
+    "builder": "carros",
+    "srcSha": "debf25aad318612f39a50db4b8af4f930baaeae7728267de8390db4199eb5e3f"
+  },
+  "vehicles/locomotiva": {
+    "name": "Locomotiva",
+    "cat": "vehicles",
+    "group": "objeto",
+    "scale": 1,
+    "rotY": 0,
+    "builder": "locomotiva",
+    "srcSha": "f623f84f5f6ab2c9be5c6b70307b1b582219deb9ca2ee85b3cc1628ba52252e1"
+  },
+  "vehicles/navio": {
+    "name": "Navio",
+    "cat": "vehicles",
+    "group": "objeto",
+    "scale": 1,
+    "rotY": 0,
+    "builder": "navio",
+    "srcSha": "7277bf8606fb3f2aeeb8c75f281ef93bc776032be8bcc3f5dfe548e5fcb03ab3"
+  },
+  "vehicles/vagao": {
+    "name": "Vagão-tanque",
+    "cat": "vehicles",
+    "group": "objeto",
+    "scale": 1,
+    "rotY": 0,
+    "builder": "vagao",
+    "srcSha": "01a6f8dc05eaa5f68e9b72b9ab4a80a8c5c0e6a16f00e03b4828fddf4cf07cc7"
+  }
+}
