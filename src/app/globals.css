@@ -990,13 +990,23 @@ button .ico-ds { margin-right:var(--e-2); }
    sem virar um problema de acerto do dedo: o resto do aperto veio da moldura
    (padding, tipografia, respiros), não do que se toca. */
 .alerta-missao { cursor:default; --missao-alvo:47px; min-height:120px; }
+/* `touch-action:none` e não `manipulation`: o cartão mora dentro de
+   #alertas-man, que rola. Com `manipulation` o dedo que escorrega durante o
+   segundo e pouco de toque ainda podia virar rolagem, e o navegador encerra o
+   toque com pointercancel — a missão morria no meio sem o visitante entender
+   por quê. Aqui não há nada para arrastar: o gesto é só segurar. */
 .missao-hold { position:relative; overflow:hidden; width:100%; margin-top:4px; border:none; border-radius:var(--r-input);
   padding:8px 12px; min-height:var(--missao-alvo,47px); font-size:15px; font-weight:800; color:#fff; background:#2a2a2a; text-align:center;
-  touch-action:manipulation; }
-.missao-hold .hold-fill { position:absolute; inset:0; width:0; background:var(--primary); transition:width var(--hold-ms,1100ms) linear; }
-.missao-hold.segurando .hold-fill { width:100%; }
+  touch-action:none; }
+/* SEM `transition`: quem escreve esta largura é o rAF de HoldMission
+   (missions.tsx), quadro a quadro, e uma interpolação do navegador por cima
+   só atrasaria a barra em relação ao toque que ela mede. Pelo mesmo motivo
+   este preenchimento não some em prefers-reduced-motion — ele não é enfeite,
+   é o único aviso de que o toque precisa CONTINUAR. Zerá-lo enchia a barra de
+   uma vez e fazia o botão parecer quebrado em toda máquina com os efeitos de
+   animação do Windows desligados. */
+.missao-hold .hold-fill { position:absolute; inset:0; width:0; background:var(--primary); }
 .missao-hold .hold-txt { position:relative; z-index:1; }
-@media (prefers-reduced-motion:reduce){ .missao-hold .hold-fill{ transition-duration:1ms; } }
 
 /* pátio: segurar com barra de progresso separada do botão */
 .missao-hold2 { width:100%; margin-top:5px; border:none; border-radius:var(--r-input); padding:8px 12px;

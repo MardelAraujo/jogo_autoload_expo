@@ -1,6 +1,6 @@
 "use client";
 
-import { useMemo, useRef, useState } from "react";
+import { useEffect, useMemo, useRef, useState } from "react";
 import { gerarPlaca } from "@/lib/utils";
 import { Icone } from "@/components/Icone";
 
@@ -92,34 +92,97 @@ function SelectMission({ placa, onDone }: { placa: string; onDone: () => void })
 }
 
 // ---- pesagem/pátio/check-out: segurar até completar ----
+/**
+ * A barra e o relógio do toque são a MESMA medida: um requestAnimationFrame
+ * escreve a largura do preenchimento e é ele próprio quem chama onDone ao
+ * chegar em 1. A versão anterior tinha dois relógios — um setTimeout(ms) para
+ * concluir e uma `transition:width` do CSS para desenhar — e os dois se
+ * desencontravam:
+ *
+ * - a transição era zerada para 1ms em `prefers-reduced-motion:reduce`, que é
+ *   o que o Chrome informa quando os efeitos de animação do Windows estão
+ *   desligados. A barra enchia de uma vez no primeiro quadro e ficava cheia
+ *   1,3 s: nenhum aviso de que era preciso continuar segurando, e quem tocava
+ *   e soltava concluía que o botão só funcionava de vez em quando;
+ * - soltar no meio devolvia a barra a zero na mesma transição de 1,3 s. Quem
+ *   tentasse de novo antes de ela esvaziar começava com a barra pela metade,
+ *   agora atrasada em relação ao toque.
+ *
+ * Como a largura passou a ser escrita quadro a quadro, o CSS do preenchimento
+ * não tem (nem pode ter) `transition` — o navegador interpolaria por cima do
+ * valor recém-escrito.
+ */
 function HoldMission({ ms, onDone }: { ms: number; onDone: () => void }) {
-  const [segurando, setSegurando] = useState(false);
-  const timer = useRef<ReturnType<typeof setTimeout> | null>(null);
-  function start() {
-    if (timer.current) return;
-    setSegurando(true);
-    timer.current = setTimeout(() => {
-      timer.current = null;
-      setSegurando(false);
+  const fillRef = useRef<HTMLSpanElement>(null);
+  const raf = useRef<number | null>(null);
+  const ponteiro = useRef<number | null>(null);
+  const feito = useRef(false);
+
+  function pintar(p: number) {
+    if (fillRef.current) fillRef.current.style.width = `${p * 100}%`;
+  }
+
+  function parar() {
+    if (raf.current !== null) cancelAnimationFrame(raf.current);
+    raf.current = null;
+  }
+
+  // Um toque pendente não pode sobreviver ao cartão: resolverAlertaManual()
+  // age sobre a CABEÇA da fila, então um quadro atrasado depois da troca de
+  // alerta resolveria a missão do caminhão seguinte de graça.
+  useEffect(() => parar, []);
+
+  function start(e: React.PointerEvent<HTMLButtonElement>) {
+    if (ponteiro.current !== null) return;
+    // Sem isto o toque longo do totem vira seleção de texto/gesto do
+    // navegador, que responde com pointercancel no meio da contagem.
+    e.preventDefault();
+    ponteiro.current = e.pointerId;
+    // `feito` vale por toque, não pela vida do botão: resolverAlertaManual()
+    // ignora alerta que ainda não é a cabeça da fila, e um travamento
+    // definitivo aqui deixaria o cartão na tela com o botão morto.
+    feito.current = false;
+    // Captura: dedo que escorrega alguns pixels — ou sai do botão — continua
+    // segurando. Era o `onPointerLeave` que cancelava a missão a cada tremida.
+    try {
+      e.currentTarget.setPointerCapture(e.pointerId);
+    } catch {
+      /* ponteiro já solto: segue sem captura, os eventos continuam no alvo */
+    }
+    const t0 = performance.now();
+    const passo = () => {
+      const p = Math.min(1, (performance.now() - t0) / ms);
+      pintar(p);
+      if (p < 1) {
+        raf.current = requestAnimationFrame(passo);
+        return;
+      }
+      raf.current = null;
+      feito.current = true;
       onDone();
-    }, ms);
+    };
+    raf.current = requestAnimationFrame(passo);
   }
-  function cancel() {
-    if (timer.current) clearTimeout(timer.current);
-    timer.current = null;
-    setSegurando(false);
+
+  // Só o ponteiro que começou o toque encerra: um segundo dedo (palma no
+  // totem) não derruba mais a contagem de quem está segurando.
+  function cancel(e: React.PointerEvent<HTMLButtonElement>) {
+    if (ponteiro.current === null || e.pointerId !== ponteiro.current) return;
+    ponteiro.current = null;
+    parar();
+    if (!feito.current) pintar(0);
   }
+
   return (
     <button
       type="button"
-      className={`missao-hold${segurando ? " segurando" : ""}`}
-      style={{ ["--hold-ms" as string]: `${ms}ms` } as React.CSSProperties}
+      className="missao-hold"
       onPointerDown={start}
       onPointerUp={cancel}
-      onPointerLeave={cancel}
       onPointerCancel={cancel}
+      onLostPointerCapture={cancel}
     >
-      <span className="hold-fill" />
+      <span className="hold-fill" ref={fillRef} />
       <span className="hold-txt">SEGURE para confirmar</span>
     </button>
   );
