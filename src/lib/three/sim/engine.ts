@@ -144,11 +144,27 @@ function criarKpi(): Kpi {
   return { exp: 0, vol: 0, checkins: 0, ciclos: [], oco: 0, interv: 0, nfe: 0, parado: 0 };
 }
 
+/**
+ * O split-screen compara DUAS OPERAÇÕES no MESMO terminal, e para a comparação
+ * valer o terminal tem que ser o mesmo dos dois lados — mesma planta, mesmas
+ * peças, mesma aparência. Por isso o equipamento condicional de buildTerminal
+ * (totem de entrada, totem de saída, poste e LED das cancelas, telão do pátio,
+ * painel da portaria, o vistoriador) é desligado NOS DOIS: o AutoLoad recebia
+ * `sel.mods` e ganhava peças que o lado do visitante não tinha, e a diferença
+ * de cenário roubava a leitura da diferença de operação.
+ *
+ * Cuidado ao mexer: isto NÃO é o mesmo `mods` que decide o que é automatizado.
+ * `lado.mods` continua vindo de `sel.mods` no lado AutoLoad e é ele que
+ * `stageAuto` lê para saber se a etapa dispensa intervenção. O que esta
+ * constante desliga é só o que se vê.
+ */
+const SEM_EQUIPAMENTO: Record<string, boolean> = {};
+
 function criarLado(auto: boolean, sel: Sel, kpi = criarKpi()): Lado {
   const mods = auto ? sel.mods : {};
   const scene = new THREE.Scene();
   const PL = getPlanta();
-  const T = buildTerminal(scene, mods, sel.modais, PL, {
+  const T = buildTerminal(scene, SEM_EQUIPAMENTO, sel.modais, PL, {
     modeloCaminhao: sel.modeloCaminhao,
     quantidadeCaminhoes: auto ? N_TRUCKS_AUTO : N_TRUCKS_MAN,
   });
