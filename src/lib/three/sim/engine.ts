@@ -78,7 +78,6 @@ export interface RotaAnimada {
   missaoTruck?: MissaoTruck;
   ativo?: boolean;
   indiceFrota?: number;
-  liberouProximo?: boolean;
 }
 
 interface AlertaNaFila {
@@ -96,9 +95,13 @@ export interface Lado {
   rotas: RotaAnimada[];
   filaAlertas: AlertaNaFila[];
   /** Quando o próximo caminhão da frota entra na portaria. Só o lado AutoLoad
-   *  usa (ver liberarPorCadencia); no manual quem chama o próximo é o
-   *  ativarProximoCaminhao, no check-in. */
+   *  usa (ver liberarPorCadencia); no manual quem solta o próximo é a cancela
+   *  (liberarAposCancela). */
   proximaEntrada: number;
+  /** Onde, na curva da rota, fica a cancela de entrada. É o marco que o lado
+   *  manual usa para saber que a via de acesso vaziou (ver liberarAposCancela).
+   *  Sai da posição real da peça na planta, projetada na curva. */
+  tCancela: number;
 }
 
 export interface AcEvento {
@@ -151,7 +154,11 @@ function criarLado(auto: boolean, sel: Sel, kpi = criarKpi()): Lado {
   });
   const camera = new THREE.OrthographicCamera(-1, 1, 1, -1, 1, 1200);
   const rotas = (T.rotasAnimadas || (T.rotaAnimada ? [T.rotaAnimada] : [])) as RotaAnimada[];
-  const lado: Lado = { auto, mods, scene, T, camera, kpi, rotas, filaAlertas: [], proximaEntrada: CADENCIA_AUTO_S };
+  const lado: Lado = {
+    auto, mods, scene, T, camera, kpi, rotas, filaAlertas: [],
+    proximaEntrada: CADENCIA_AUTO_S,
+    tCancela: projetarNaRota(rotas[0], T.gateIn),
+  };
   rotas.forEach((R, indice) => {
     let i = 0;
     R.order.forEach((o) => {
@@ -159,11 +166,10 @@ function criarLado(auto: boolean, sel: Sel, kpi = criarKpi()): Lado {
     });
     // Os dois lados começam igual: um caminhão na pista, o resto da frota
     // esperando a vez FORA do circuito. O que muda é quem chama o próximo —
-    // ativarProximoCaminhao no manual, liberarPorCadencia no AutoLoad.
+    // liberarAposCancela no manual, liberarPorCadencia no AutoLoad.
     R.ativo = indice === 0;
     R.root.visible = R.ativo;
     R.indiceFrota = indice;
-    R.liberouProximo = false;
     R.lado = lado;
     R.missaoTruck = { placa: gerarPlaca(), motorista: gerarMotorista(), alert: null, cicloT0: null };
   });
@@ -276,21 +282,54 @@ function posicionarRotaAnimada(R: RotaAnimada) {
     R.trailer.rotation.y = Math.atan2(hitch.x - tp.x, hitch.z - tp.z);
 }
 
+/** Em que ponto da curva (0..1) uma peça da planta fica. Usado para achar a
+ *  cancela de entrada na rota; se a peça não existir, cai no marco do check-in,
+ *  que é o vizinho dela. */
+function projetarNaRota(R: RotaAnimada | undefined, peca: THREE.Object3D | null | undefined): number {
+  if (!R) return 0;
+  if (!peca) return R.order.find((o) => o.stageId === "checkin")?.t ?? 0;
+  let melhor = 0;
+  let menor = Infinity;
+  const AMOSTRAS = 600;
+  for (let i = 0; i <= AMOSTRAS; i++) {
+    const t = i / AMOSTRAS;
+    const p = R.curve.getPointAt(R.closed ? mod1(t) : t);
+    const d = (p.x - peca.position.x) ** 2 + (p.z - peca.position.z) ** 2;
+    if (d < menor) {
+      menor = d;
+      melhor = t;
+    }
+  }
+  return melhor;
+}
+
 /**
- * Porte simplificado de stepRotaAnimada() — linha 10100. Chamada quando um
- * caminhão SAI do check-in.
+ * A chegada do lado manual: o próximo caminhão da frota só entra na via de
+ * acesso quando o anterior JÁ PASSOU PELA CANCELA de entrada — isto é, quando
+ * não há mais ninguém entre o começo da rota e a cancela.
  *
- * Vale só para o lado manual, e é o roteiro dele: um caminhão de cada vez
- * chegando ao balcão do visitante, o próximo só depois que este foi atendido.
- * O AutoLoad tem outra regra de chegada (liberarPorCadencia) e ela não pode ser
- * atropelada por esta — se as duas valessem, o intervalo entre chegadas
- * deixaria de ser o intervalo configurado.
+ * A regra é geométrica de propósito, e não "quando o anterior sai do check-in",
+ * que era a versão antiga: entre sair da parada e cruzar a cancela ainda há 12
+ * un de pista, e liberar antes disso é liberar com a portaria ocupada.
+ *
+ * O efeito de jogo é o que interessa: o caminhão só passa pela cancela depois
+ * que o visitante atende o check-in dele, então QUEM DITA O RITMO DE CHEGADA É
+ * A MÃO DE QUEM JOGA. Jogou rápido, entra mais caminhão; demorou, a via de
+ * acesso fica ocupada e a frota espera do lado de fora. É o oposto do AutoLoad,
+ * onde a chegada é um relógio que não depende de ninguém (liberarPorCadencia),
+ * e é essa diferença que o split-screen existe para mostrar.
+ *
+ * A versão antiga também morria: era um tiro só por caminhão e a corrente
+ * andava pelo índice da frota, então depois de N-1 liberações não entrava mais
+ * ninguém no turno inteiro. Esta regra vale do primeiro ao último segundo.
  */
-function ativarProximoCaminhao(lado: Lado, R: RotaAnimada) {
-  if (lado.auto || R.liberouProximo) return;
-  R.liberouProximo = true;
-  const proximo = lado.rotas[(R.indiceFrota ?? 0) + 1];
-  if (!proximo || proximo.ativo) return;
+function liberarAposCancela(lado: Lado) {
+  if (lado.auto) return;
+  const proximo = lado.rotas.find((R) => !R.ativo);
+  if (!proximo) return;
+  // Quem ainda não chegou na cancela está na via de acesso — inclusive quem
+  // acabou de fechar a volta e voltou para o começo da rota.
+  if (lado.rotas.some((R) => R.ativo && R.tPos <= lado.tCancela)) return;
   proximo.ativo = true;
   proximo.root.visible = true;
   posicionarRotaAnimada(proximo);
@@ -303,10 +342,10 @@ function ativarProximoCaminhao(lado: Lado, R: RotaAnimada) {
  * aparece dentro do terminal: quem está lá dentro entrou pela portaria e passou
  * por todas as etapas, como tem que ser.
  *
- * É esta função que substitui, no AutoLoad, a rampa do ativarProximoCaminhao —
- * que amarrava a chegada seguinte ao atendimento da anterior e, por isso, só
- * disparava duas vezes no turno inteiro. Aqui a chegada é um relógio: o que a
- * automação encurta é o INTERVALO entre um caminhão e o próximo, que é
+ * É a contraparte de liberarAposCancela, e a diferença entre as duas é o
+ * argumento do produto: lá a chegada seguinte espera o visitante atender a
+ * anterior; aqui a chegada é um relógio, porque não há ninguém para esperar. O
+ * que a automação encurta é o INTERVALO entre um caminhão e o próximo, que é
  * exatamente a promessa do módulo de Agendamento (slots de chegada no lugar da
  * rajada). O resultado é caminhão novo surgindo na portaria ao longo da
  * partida, e não uma frota que aparece de uma vez.
@@ -432,10 +471,7 @@ function stepRotaAnimada(lado: Lado, R: RotaAnimada, dt: number, sim: SimState) 
     // conseguiu PROCESSAR até o fim. A distância entre os dois é o que ficou
     // preso na rota quando o relógio parou — que é justamente o que nenhuma
     // das duas medidas sozinha mostrava.
-    if (saiuDe === "checkin") {
-      lado.kpi.checkins++;
-      ativarProximoCaminhao(lado, R);
-    }
+    if (saiuDe === "checkin") lado.kpi.checkins++;
     // O CAMINHÃO CONTA QUANDO É PROCESSADO, e não quando some da tela.
     //
     // Contava na saída de `saida` — a cancela de saída, último ponto do
@@ -589,6 +625,7 @@ function updateGates(lado: Lado, dt: number) {
 export function tickSim(sim: SimState, dt: number, now: number): boolean {
   sim.clock += dt;
   sim.restante = Math.max(0, (sim.turnoFim - now) / 1000);
+  liberarAposCancela(sim.man);
   sim.man.rotas.forEach((R) => stepRotaAnimada(sim.man, R, dt, sim));
   updateGates(sim.man, dt);
   liberarPorCadencia(sim.auto, sim);

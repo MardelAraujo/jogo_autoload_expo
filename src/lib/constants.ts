@@ -7,46 +7,49 @@ export const DURACAO_TURNO = 180; // s — partida única de 3 min. A escolha de
 // (sel.rodadas fica sempre em 1), então este valor É a partida inteira — não mais a fatia de uma rodada.
 export const VOL_MEDIO = 30; // m³ por caminhão expedido
 /**
- * Frota animada de cada lado da simulação, e o intervalo com que o lado
- * AutoLoad manda um caminhão novo para a portaria.
+ * Frota animada de cada lado da simulação, e as duas regras de chegada.
  *
- * O manual fica em 3 e continua liberando o próximo só quando o anterior sai do
- * check-in: a fila de alertas dele é de servidor único (promoverAlertaManual
- * ativa um alerta por vez), então caminhão a mais ali não vira caminhão
- * expedido, vira caminhão parado esperando o visitante chegar nele. E a
- * chegada um-a-um É o roteiro daquele lado.
+ * Os dois lados agora recebem caminhão novo o turno inteiro, mas por motivos
+ * diferentes, e é essa diferença que o jogo existe para mostrar.
  *
- * No AutoLoad o que muda não é onde o caminhão nasce — é de quanto em quanto
- * tempo ele chega. TODO caminhão continua nascendo no começo da rota e passando
- * por agendamento, pátio e check-in como qualquer outro; o que a automação faz
- * é encurtar o intervalo entre uma chegada e a seguinte. É literalmente o que o
- * módulo de Agendamento promete: slots de chegada em vez da rajada das 8h.
+ * MANUAL — a chegada é limitada pela CANCELA: o próximo só entra na via de
+ * acesso quando o anterior passou pela cancela de entrada (ver
+ * liberarAposCancela). Como o caminhão só passa pela cancela depois que o
+ * visitante atende o check-in dele, quem dita o ritmo de chegada é a mão de
+ * quem está jogando. E há um teto atrás disso: a fila de alertas do lado manual
+ * é de servidor único (promoverAlertaManual ativa um alerta por vez), então a
+ * partir de certo ponto caminhão a mais não vira caminhão expedido, vira
+ * caminhão parado — que é exatamente o argumento do produto.
+ *
+ * AUTOLOAD — a chegada é um relógio: mais um caminhão a cada CADENCIA_AUTO_S,
+ * porque ninguém precisa atender ninguém. É o módulo de Agendamento fazendo o
+ * que promete, slots de chegada no lugar da rajada das 8h. TODO caminhão dos
+ * dois lados nasce no começo da rota e passa por agendamento, pátio e check-in;
+ * nenhum aparece dentro do terminal.
+ *
+ * Expedições em 180 s de turno, com a rota do planta_layout.json (volta de
+ * 82,2 s, 6 paradas de 3 s), variando quanto o visitante demora por alerta:
+ *
+ *     frota manual     1,5 s/alerta   3 s/alerta   5 s/alerta
+ *     3 (como era)          5             4            3
+ *     4                     6             5            4
+ *     5  <- atual           6             6            3
+ *     6                     7             6            3
+ *
+ * Cinco é o melhor para quem joga bem e o mais fiel ao "menos que o AutoLoad".
+ * Repare na coluna dos 5 s: com visitante lento, a frota maior NÃO rende mais —
+ * satura a fila e o tempo parado por caminhão sobe de 45 s para 53 s. Isso é o
+ * jogo funcionando, não um defeito. Se no estande a média for de gente lenta,
+ * 4 é o número que nunca piora; a tabela está aqui para essa decisão.
  *
  * `N_TRUCKS_AUTO` é o TAMANHO DA FROTA, não quantos aparecem de uma vez: com
- * cadência de 14 s e volta de 82,2 s, ficam ~4,8 caminhões no pátio em média e
- * 6 no pico, e o sexto só entra por volta dos 70 s de turno.
- *
- * Medido com a rota do planta_layout.json (volta de 82,2 s, 6 paradas de 3 s)
- * em 180 s de turno. "encontros/par" é a média por segundo de pares de
- * caminhões a menos de 45 u um do outro, dividida pelo número de pares — a
- * medida de aglomeração que não infla só porque a frota cresceu:
- *
- *     3, entrando um a um (como era) -> 6 expedidos | dist.mín 19 u | 0,043
- *     6, cadência de 14 s            -> 9 expedidos | dist.mín 24 u | 0,020  <- atual
- *     7, cadência de 14 s            -> 10 expedidos | dist.mín 19 u | 0,031
- *     7, cadência de 12 s            -> 11 expedidos | dist.mín 25 u | 0,024
- *
- * Repare que a configuração atual aglomera MENOS que a de hoje, e nenhum par de
- * caminhões chega tão perto quanto os de hoje chegam: quem entra espaçado por
- * 14 s entra 196 u atrás do anterior, e a volta absorve isso sem comboio. Foi
- * assim que a tentativa anterior — a frota inteira enfileirada no acesso, 0,188
- * por par — foi descartada.
- *
- * Baixar a cadência daqui ainda rende (a tabela mostra até 11), mas custa
- * caminhão na tela, render na TV do estande e ~0,1 evento/s a mais no
- * #auto-console. Se mexer, meça os encontros de novo.
+ * cadência de 14 s e volta de 82,2 s ficam ~4,8 caminhões no pátio em média e o
+ * sexto só entra por volta dos 70 s de turno. Ele rende 9 expedições, e a
+ * distância entre chegadas (196 u) é o que impede o comboio — uma tentativa
+ * anterior, com a frota inteira entrando junta, dava 12 expedições e um
+ * paredão de tanques colado no portão.
  */
-export const N_TRUCKS_MAN = 3;
+export const N_TRUCKS_MAN = 5;
 export const N_TRUCKS_AUTO = 6;
 export const CADENCIA_AUTO_S = 14;
 
