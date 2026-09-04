@@ -6,7 +6,49 @@ import type { NomeIcone } from "@/components/Icone";
 export const DURACAO_TURNO = 180; // s — partida única de 3 min. A escolha de duração saiu do montador
 // (sel.rodadas fica sempre em 1), então este valor É a partida inteira — não mais a fatia de uma rodada.
 export const VOL_MEDIO = 30; // m³ por caminhão expedido
-export const N_TRUCKS = 3; // caminhões animados circulando por lado na simulação
+/**
+ * Frota animada de cada lado da simulação, e o intervalo com que o lado
+ * AutoLoad manda um caminhão novo para a portaria.
+ *
+ * O manual fica em 3 e continua liberando o próximo só quando o anterior sai do
+ * check-in: a fila de alertas dele é de servidor único (promoverAlertaManual
+ * ativa um alerta por vez), então caminhão a mais ali não vira caminhão
+ * expedido, vira caminhão parado esperando o visitante chegar nele. E a
+ * chegada um-a-um É o roteiro daquele lado.
+ *
+ * No AutoLoad o que muda não é onde o caminhão nasce — é de quanto em quanto
+ * tempo ele chega. TODO caminhão continua nascendo no começo da rota e passando
+ * por agendamento, pátio e check-in como qualquer outro; o que a automação faz
+ * é encurtar o intervalo entre uma chegada e a seguinte. É literalmente o que o
+ * módulo de Agendamento promete: slots de chegada em vez da rajada das 8h.
+ *
+ * `N_TRUCKS_AUTO` é o TAMANHO DA FROTA, não quantos aparecem de uma vez: com
+ * cadência de 14 s e volta de 82,2 s, ficam ~4,8 caminhões no pátio em média e
+ * 6 no pico, e o sexto só entra por volta dos 70 s de turno.
+ *
+ * Medido com a rota do planta_layout.json (volta de 82,2 s, 6 paradas de 3 s)
+ * em 180 s de turno. "encontros/par" é a média por segundo de pares de
+ * caminhões a menos de 45 u um do outro, dividida pelo número de pares — a
+ * medida de aglomeração que não infla só porque a frota cresceu:
+ *
+ *     3, entrando um a um (como era) -> 6 expedidos | dist.mín 19 u | 0,043
+ *     6, cadência de 14 s            -> 9 expedidos | dist.mín 24 u | 0,020  <- atual
+ *     7, cadência de 14 s            -> 10 expedidos | dist.mín 19 u | 0,031
+ *     7, cadência de 12 s            -> 11 expedidos | dist.mín 25 u | 0,024
+ *
+ * Repare que a configuração atual aglomera MENOS que a de hoje, e nenhum par de
+ * caminhões chega tão perto quanto os de hoje chegam: quem entra espaçado por
+ * 14 s entra 196 u atrás do anterior, e a volta absorve isso sem comboio. Foi
+ * assim que a tentativa anterior — a frota inteira enfileirada no acesso, 0,188
+ * por par — foi descartada.
+ *
+ * Baixar a cadência daqui ainda rende (a tabela mostra até 11), mas custa
+ * caminhão na tela, render na TV do estande e ~0,1 evento/s a mais no
+ * #auto-console. Se mexer, meça os encontros de novo.
+ */
+export const N_TRUCKS_MAN = 3;
+export const N_TRUCKS_AUTO = 6;
+export const CADENCIA_AUTO_S = 14;
 
 export const JORNADA_MS = 2600;
 export const AGUARDO_MS = 10000;

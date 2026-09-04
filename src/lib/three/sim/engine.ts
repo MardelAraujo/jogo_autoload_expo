@@ -2,7 +2,7 @@ import * as THREE from "three";
 import { buildTerminal, getPlanta, type BuildTerminalHandle } from "@/lib/three/scene";
 import { disposeSceneContents } from "@/lib/three/renderer";
 import { gerarPlaca, gerarMotorista, tocar, type Motorista } from "@/lib/utils";
-import { DURACAO_TURNO, N_TRUCKS, ORDEM_MODS, PONTOS, STAGES_DEF, VOL_MEDIO, type Stage } from "@/lib/constants";
+import { CADENCIA_AUTO_S, DURACAO_TURNO, N_TRUCKS_AUTO, N_TRUCKS_MAN, ORDEM_MODS, PONTOS, STAGES_DEF, VOL_MEDIO, type Stage } from "@/lib/constants";
 import { instalarConsoleRota, logAndando, logChegada, logRotaMontada, logSaida } from "./debug-rota";
 import type { Sel } from "@/state/kiosk-store";
 import { useKioskStore } from "@/state/kiosk-store";
@@ -95,6 +95,10 @@ export interface Lado {
   kpi: Kpi;
   rotas: RotaAnimada[];
   filaAlertas: AlertaNaFila[];
+  /** Quando o próximo caminhão da frota entra na portaria. Só o lado AutoLoad
+   *  usa (ver liberarPorCadencia); no manual quem chama o próximo é o
+   *  ativarProximoCaminhao, no check-in. */
+  proximaEntrada: number;
 }
 
 export interface AcEvento {
@@ -143,16 +147,19 @@ function criarLado(auto: boolean, sel: Sel, kpi = criarKpi()): Lado {
   const PL = getPlanta();
   const T = buildTerminal(scene, mods, sel.modais, PL, {
     modeloCaminhao: sel.modeloCaminhao,
-    quantidadeCaminhoes: N_TRUCKS,
+    quantidadeCaminhoes: auto ? N_TRUCKS_AUTO : N_TRUCKS_MAN,
   });
   const camera = new THREE.OrthographicCamera(-1, 1, 1, -1, 1, 1200);
   const rotas = (T.rotasAnimadas || (T.rotaAnimada ? [T.rotaAnimada] : [])) as RotaAnimada[];
-  const lado: Lado = { auto, mods, scene, T, camera, kpi, rotas, filaAlertas: [] };
+  const lado: Lado = { auto, mods, scene, T, camera, kpi, rotas, filaAlertas: [], proximaEntrada: CADENCIA_AUTO_S };
   rotas.forEach((R, indice) => {
     let i = 0;
     R.order.forEach((o) => {
       if ((R.waits[o.idx] || 0) > 0) o.stageId = ROTA_PARADAS[i++];
     });
+    // Os dois lados começam igual: um caminhão na pista, o resto da frota
+    // esperando a vez FORA do circuito. O que muda é quem chama o próximo —
+    // ativarProximoCaminhao no manual, liberarPorCadencia no AutoLoad.
     R.ativo = indice === 0;
     R.root.visible = R.ativo;
     R.indiceFrota = indice;
@@ -269,15 +276,60 @@ function posicionarRotaAnimada(R: RotaAnimada) {
     R.trailer.rotation.y = Math.atan2(hitch.x - tp.x, hitch.z - tp.z);
 }
 
-/** Porte simplificado de stepRotaAnimada() — linha 10100. */
+/**
+ * Porte simplificado de stepRotaAnimada() — linha 10100. Chamada quando um
+ * caminhão SAI do check-in.
+ *
+ * Vale só para o lado manual, e é o roteiro dele: um caminhão de cada vez
+ * chegando ao balcão do visitante, o próximo só depois que este foi atendido.
+ * O AutoLoad tem outra regra de chegada (liberarPorCadencia) e ela não pode ser
+ * atropelada por esta — se as duas valessem, o intervalo entre chegadas
+ * deixaria de ser o intervalo configurado.
+ */
 function ativarProximoCaminhao(lado: Lado, R: RotaAnimada) {
-  if (R.liberouProximo) return;
+  if (lado.auto || R.liberouProximo) return;
   R.liberouProximo = true;
   const proximo = lado.rotas[(R.indiceFrota ?? 0) + 1];
   if (!proximo || proximo.ativo) return;
   proximo.ativo = true;
   proximo.root.visible = true;
   posicionarRotaAnimada(proximo);
+}
+
+/**
+ * A chegada do lado AutoLoad: de CADENCIA_AUTO_S em CADENCIA_AUTO_S segundos,
+ * mais um caminhão da frota entra — SEMPRE pelo começo da rota, isto é, pela
+ * via de acesso, antes do agendamento, do pátio e do check-in. Nenhum caminhão
+ * aparece dentro do terminal: quem está lá dentro entrou pela portaria e passou
+ * por todas as etapas, como tem que ser.
+ *
+ * É esta função que substitui, no AutoLoad, a rampa do ativarProximoCaminhao —
+ * que amarrava a chegada seguinte ao atendimento da anterior e, por isso, só
+ * disparava duas vezes no turno inteiro. Aqui a chegada é um relógio: o que a
+ * automação encurta é o INTERVALO entre um caminhão e o próximo, que é
+ * exatamente a promessa do módulo de Agendamento (slots de chegada no lugar da
+ * rajada). O resultado é caminhão novo surgindo na portaria ao longo da
+ * partida, e não uma frota que aparece de uma vez.
+ *
+ * A guarda de portaria desimpedida existe para a cadência não empurrar um
+ * caminhão para dentro de outro que ainda não saiu do ponto de nascimento: aí a
+ * entrada fica para o próximo quadro, e não se perde o intervalo — só se adia.
+ */
+function liberarPorCadencia(lado: Lado, sim: SimState) {
+  if (!lado.auto || sim.clock < lado.proximaEntrada) return;
+  const proximo = lado.rotas.find((R) => !R.ativo);
+  if (!proximo) return;
+  const encostado = lado.rotas.some((o) => {
+    if (o === proximo || !o.ativo) return false;
+    const dx = o.tractor.position.x - proximo.tractor.position.x;
+    const dz = o.tractor.position.z - proximo.tractor.position.z;
+    return dx * dx + dz * dz < (HEADWAY_U * 1.4) ** 2;
+  });
+  if (encostado) return;
+  proximo.ativo = true;
+  proximo.root.visible = true;
+  posicionarRotaAnimada(proximo);
+  lado.proximaEntrada = sim.clock + CADENCIA_AUTO_S;
 }
 
 /**
@@ -539,6 +591,7 @@ export function tickSim(sim: SimState, dt: number, now: number): boolean {
   sim.restante = Math.max(0, (sim.turnoFim - now) / 1000);
   sim.man.rotas.forEach((R) => stepRotaAnimada(sim.man, R, dt, sim));
   updateGates(sim.man, dt);
+  liberarPorCadencia(sim.auto, sim);
   sim.auto.rotas.forEach((R) => stepRotaAnimada(sim.auto, R, dt, sim));
   updateGates(sim.auto, dt);
   return sim.restante <= 0;
