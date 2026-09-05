@@ -214,6 +214,9 @@ function snapshot(sim: { man: Lado; auto: Lado; clock: number } | null) {
         etapa: o?.stageId ?? "—",
         "espera restante": R.state === "wait" ? n2(R.waitLeft) + "s" : "—",
         placa: R.missaoTruck?.placa ?? "—",
+        // número da chamada no telão do pátio: entra 0,5 s antes do check-in
+        // (ver anunciarChamada) e é o que o painel do pátio está mostrando.
+        "nº": R.missaoTruck?.numero ?? "—",
         modelo: modeloDoCaminhao(R),
       });
     });

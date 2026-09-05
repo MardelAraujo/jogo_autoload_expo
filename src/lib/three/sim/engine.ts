@@ -43,6 +43,11 @@ export interface MissaoTruck {
   motorista: Motorista;
   alert: Alerta | null;
   cicloT0: number | null;
+  /** Ordem em que este caminhão foi chamado para o check-in NESTE lado — o
+   *  número que o telão do pátio mostra. `null` até a chamada acontecer, e
+   *  zerado de novo a cada volta, porque a volta seguinte é outro caminhão
+   *  (placa e motorista também são sorteados de novo). */
+  numero: number | null;
 }
 
 export interface Kpi {
@@ -78,6 +83,9 @@ export interface RotaAnimada {
   missaoTruck?: MissaoTruck;
   ativo?: boolean;
   indiceFrota?: number;
+  /** Segundos que o caminhão ainda espera parado depois de ser chamado, antes
+   *  de arrancar. Ver chamarParaSair. */
+  esperaChamada?: number;
 }
 
 interface AlertaNaFila {
@@ -94,6 +102,9 @@ export interface Lado {
   kpi: Kpi;
   rotas: RotaAnimada[];
   filaAlertas: AlertaNaFila[];
+  /** Quantos caminhões já foram chamados para o check-in neste lado. O primeiro
+   *  chamado é o número 1; cada lado conta o seu. */
+  chamadas: number;
   /** Quando o próximo caminhão da frota entra na portaria. Só o lado AutoLoad
    *  usa (ver liberarPorCadencia); no manual quem solta o próximo é a cancela
    *  (liberarAposCancela). */
@@ -172,7 +183,8 @@ function criarLado(auto: boolean, sel: Sel, kpi = criarKpi()): Lado {
   const rotas = (T.rotasAnimadas || (T.rotaAnimada ? [T.rotaAnimada] : [])) as RotaAnimada[];
   const lado: Lado = {
     auto, mods, scene, T, camera, kpi, rotas, filaAlertas: [],
-    proximaEntrada: CADENCIA_AUTO_S,
+    chamadas: 0,
+    proximaEntrada: 0,
     tCancela: projetarNaRota(rotas[0], T.gateIn),
   };
   rotas.forEach((R, indice) => {
@@ -180,14 +192,16 @@ function criarLado(auto: boolean, sel: Sel, kpi = criarKpi()): Lado {
     R.order.forEach((o) => {
       if ((R.waits[o.idx] || 0) > 0) o.stageId = ROTA_PARADAS[i++];
     });
-    // Os dois lados começam igual: um caminhão na pista, o resto da frota
-    // esperando a vez FORA do circuito. O que muda é quem chama o próximo —
-    // liberarAposCancela no manual, liberarPorCadencia no AutoLoad.
-    R.ativo = indice === 0;
+    // NINGUÉM começa na pista, nem o primeiro: quem põe caminhão em movimento é
+    // sempre a regra de chegada do lado (liberarAposCancela no manual,
+    // liberarPorCadencia no AutoLoad), e ela passa pelo painel de chamada. Se o
+    // primeiro nascesse já rodando, ele seria o único do turno a sair da vaga
+    // sem ser chamado.
+    R.ativo = false;
     R.root.visible = R.ativo;
     R.indiceFrota = indice;
     R.lado = lado;
-    R.missaoTruck = { placa: gerarPlaca(), motorista: gerarMotorista(), alert: null, cicloT0: null };
+    R.missaoTruck = { placa: gerarPlaca(), motorista: gerarMotorista(), alert: null, cicloT0: null, numero: null };
   });
   logRotaMontada(lado);
   return lado;
@@ -275,10 +289,41 @@ function avancarPonteiroRota(R: RotaAnimada) {
     if (R.missaoTruck) {
       R.missaoTruck.placa = gerarPlaca();
       R.missaoTruck.motorista = gerarMotorista();
+      // Volta nova é caminhão novo: entra na fila do painel como qualquer outro.
+      if (R.lado) chamarParaSair(R.lado, R);
     }
   } else {
     R.ptr++;
   }
+}
+
+/**
+ * A chamada: o painel do pátio anuncia o número do caminhão e SÓ MEIO SEGUNDO
+ * DEPOIS ele arranca. É a ordem que existe num terminal de verdade — o motorista
+ * está parado esperando ser chamado, o painel chama, ele sai. Anunciar quando o
+ * caminhão já está encostando no check-in, como esta função fazia antes, contava
+ * a história ao contrário.
+ *
+ * Vale nos dois momentos em que um caminhão entra na rota, que são os dois
+ * momentos em que ele "sai da vaga": quando a frota o libera (liberarAposCancela
+ * no manual, liberarPorCadencia no AutoLoad) e quando fecha a volta e recomeça —
+ * a volta nova é outro caminhão, com placa e motorista sorteados de novo.
+ *
+ * A numeração é por lado e começa em 1: o primeiro chamado é o número 1. Vale
+ * para as DUAS operações, e é de propósito — a diferença entre elas passa a ser
+ * quantos números cada uma queima em três minutos, legível sem olhar o placar.
+ *
+ * O número fica no painel até a chamada seguinte substituí-lo, que é como um
+ * painel de chamada se comporta; apagar entre um caminhão e outro deixaria a
+ * tela apagada a maior parte do turno.
+ */
+const ANTECEDENCIA_CHAMADA_S = 0.5;
+
+function chamarParaSair(lado: Lado, R: RotaAnimada) {
+  if (!R.missaoTruck) return;
+  R.missaoTruck.numero = ++lado.chamadas;
+  R.esperaChamada = ANTECEDENCIA_CHAMADA_S;
+  lado.T.chamarNoTelao(R.missaoTruck.numero);
 }
 
 /** Porte de posicionarRotaAnimada() — linha 10068. */
@@ -349,6 +394,7 @@ function liberarAposCancela(lado: Lado) {
   proximo.ativo = true;
   proximo.root.visible = true;
   posicionarRotaAnimada(proximo);
+  chamarParaSair(lado, proximo);
 }
 
 /**
@@ -384,6 +430,7 @@ function liberarPorCadencia(lado: Lado, sim: SimState) {
   proximo.ativo = true;
   proximo.root.visible = true;
   posicionarRotaAnimada(proximo);
+  chamarParaSair(lado, proximo);
   lado.proximaEntrada = sim.clock + CADENCIA_AUTO_S;
 }
 
@@ -530,6 +577,13 @@ function stepRotaAnimada(lado: Lado, R: RotaAnimada, dt: number, sim: SimState) 
       }
     }
     avancarPonteiroRota(R);
+  }
+  // Chamado, mas ainda parado: o painel do pátio já mostra o número dele e o
+  // caminhão só arranca quando esta espera zera (ver chamarParaSair).
+  if ((R.esperaChamada ?? 0) > 0) {
+    R.esperaChamada = Math.max(0, (R.esperaChamada ?? 0) - dt);
+    posicionarRotaAnimada(R);
+    return;
   }
   if (bloqueadoPorFrente(lado, R)) {
     posicionarRotaAnimada(R);

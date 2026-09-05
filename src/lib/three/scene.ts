@@ -876,6 +876,9 @@ export interface BuildTerminalHandle {
   curveLen: number;
   gateIn: THREE.Object3D;
   gateOut: THREE.Object3D;
+  /** Escreve o número do caminhão no telão de chamada do pátio; `null` apaga.
+   *  Quem chama é a simulação (ver anunciarChamada em sim/engine.ts). */
+  chamarNoTelao: (numero: number | null) => void;
   ship?: THREE.Object3D | null;
   person: THREE.Group;
   rotaAnimada?: RotaAnimadaEstado;
@@ -902,7 +905,10 @@ export function buildTerminal(
     EL_BALANCA_PESAGEM1, EL_BALANCA_PESAGEM2,
     EL_GUARITA_CHECKOUT, EL_GUARITA_DECOR,
     EL_VISTORIA_STAGE, EL_VISTORIA_DECOR, EL_COBERTURA_DECOR, EL_COBERTURA_STAGE,
-    WPTS, PT_TELAO,
+    // PT_TELAO fica de fora: o painel de chamada do pátio é peça do truck
+    // center (addCallBoard), não algo que buildTerminal posicione. O ponto
+    // derivado continua existindo para a maquete do montador (maquete.ts).
+    WPTS,
   } = refs;
 
   carregarTruckCustom(PL);
@@ -986,7 +992,12 @@ export function buildTerminal(
   colocar(EL_TANQUES, pecaParque);
   elsDoTipo(PL, "parque_tanques").slice(1).forEach((e) => colocar(e, pecaParque));
   colocar(EL_PORTARIA, () => peca("structures/portaria", makeGatehouse));
-  colocar(EL_TRUCKCENTER, makeTruckCenter);
+  // O painel de chamada do pátio é peça do truck center (addCallBoard, em
+  // builders/truck-center.ts) — o gantry ao lado do prédio, virado pro pátio.
+  // A simulação escreve nele o número do caminhão que está sendo chamado; sem
+  // truck_center na planta o jogo segue, só não tem onde anunciar.
+  const truckCenter = colocar(EL_TRUCKCENTER, makeTruckCenter);
+  T.chamarNoTelao = (truckCenter?.userData.chamarNoTelao as ((n: number | null) => void) | undefined) ?? (() => {});
   colocar(EL_BALANCA_PESAGEM1, () => peca("structures/balanca", makeScale));
   colocar(EL_BALANCA_PESAGEM2, () => peca("structures/balanca", makeScale));
   colocar(EL_GUARITA_CHECKOUT, () => peca("structures/guarita", makeBooth));
@@ -1141,11 +1152,6 @@ export function buildTerminal(
       box(1, 0.5, 0.6, M.cabinetDark, x + 2.4, 5, z, T.equip);
       box(0.3, 0.3, 0.1, M.ledRed, x + 1.9, 5, z, T.equip);
     });
-  }
-  if (mods.filas) {
-    const [ttx, ttz] = PT_TELAO;
-    cyl(0.2, 0.26, 7, M.cabinetDark, ttx, 3.5, ttz, T.equip, 8);
-    const tela = box(7, 3.4, 0.4, M.screen, ttx, 8.2, ttz, T.equip); tela.rotation.y = Math.PI / 4;
   }
   if (mods.dashboard) {
     box(9, 4.2, 0.5, M.screen, pox + 10, 9.6, poz - 6, T.equip);

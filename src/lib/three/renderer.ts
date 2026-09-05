@@ -173,7 +173,13 @@ export function disposeSceneContents(scene: THREE.Scene | null | undefined) {
     if (mesh.geometry) mesh.geometry.dispose();
     const mats = Array.isArray(mesh.material) ? mesh.material : mesh.material ? [mesh.material] : [];
     mats.forEach((m) => {
-      if (m && !SHARED_MATS.has(m)) m.dispose();
+      if (!m || SHARED_MATS.has(m)) return;
+      // Material com canvas próprio (o telão de chamada do pátio): dispose() do
+      // material NÃO libera a textura, e um canvas por cena por turno vaza a
+      // tarde inteira. Quem cria marca com `texturaPropria`.
+      const propria = (m.userData as { texturaPropria?: THREE.Texture } | undefined)?.texturaPropria;
+      if (propria) propria.dispose();
+      m.dispose();
     });
   });
 }

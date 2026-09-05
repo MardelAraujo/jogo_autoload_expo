@@ -96,8 +96,18 @@ function addBuilding(g: THREE.Object3D, cx: number, cz: number) {
  * Painel de chamada de senha — gantry de dois postes com um letreiro de matriz
  * (a fila de senhas) virado pro pátio (+Z). Gabinete escuro, sem faixa acesa
  * chamativa: só a tela informa.
+ *
+ * A matriz não é mais textura decorativa: é um canvas próprio desta instância,
+ * e quem escreve nele é a simulação (anunciarChamada, em sim/engine.ts) meio
+ * segundo antes do caminhão chegar no check-in. Devolve a função de escrita;
+ * makeTruckCenter a pendura no userData do grupo para o buildTerminal alcançar.
+ *
+ * Canvas próprio, e não compartilhado, porque os dois lados do split-screen
+ * chamam caminhões diferentes ao mesmo tempo. Por isso o material vai marcado
+ * com `texturaPropria`: `material.dispose()` NÃO libera a textura, e um canvas
+ * vazado por cena por turno é o tipo de vazamento que já travou o kiosk.
  */
-function addCallBoard(g: THREE.Object3D, x: number, z: number) {
+function addCallBoard(g: THREE.Object3D, x: number, z: number): (numero: number | null) => void {
   const postH = 4.4;
   [-2.6, 2.6].forEach((dx) => {
     box(0.5, 0.3, 0.5, M.concrete, x + dx, 0.15, z, g);
@@ -106,8 +116,36 @@ function addCallBoard(g: THREE.Object3D, x: number, z: number) {
   box(6.6, 0.35, 0.45, M.cabinetDark, x, postH, z, g);            // travessa
   const panelY = postH + 1.7;
   box(6.8, 3.2, 0.45, M.cabinetDark, x, panelY, z, g);           // gabinete do painel
-  box(6.2, 2.7, 0.1, M.screen, x, panelY, z + 0.26, g);          // matriz (fila de senhas)
+
+  const cnv = document.createElement("canvas");
+  cnv.width = 460;
+  cnv.height = 200;
+  const ctx = cnv.getContext("2d")!;
+  const tex = new THREE.CanvasTexture(cnv);
+  const mat = new THREE.MeshBasicMaterial({ map: tex });
+  mat.userData.texturaPropria = tex;
+  box(6.2, 2.7, 0.1, mat, x, panelY, z + 0.26, g);               // matriz (fila de senhas)
   box(6.8, 0.2, 0.5, M.cabinetDark, x, panelY + 1.7, z, g);      // rufo fino
+
+  // O dígito ocupa quase toda a altura da matriz de propósito. Com o terminal
+  // inteiro em quadro esta face tem ~51 x 22 px na TV do estande; um número
+  // menor que isso existiria sem ser lido, que é o mesmo que não existir.
+  const escrever = (numero: number | null) => {
+    ctx.fillStyle = "#0a1018";
+    ctx.fillRect(0, 0, cnv.width, cnv.height);
+    ctx.textBaseline = "middle";
+    ctx.textAlign = "left";
+    ctx.fillStyle = "#4d6b87";
+    ctx.font = "bold 26px Consolas, 'Courier New', monospace";
+    ctx.fillText("CHAMANDO", 16, 24);
+    ctx.textAlign = "center";
+    ctx.fillStyle = numero === null ? "#1e3550" : "#3ee08a";
+    ctx.font = "bold 180px Consolas, 'Courier New', monospace";
+    ctx.fillText(numero === null ? "--" : String(numero), cnv.width / 2, 118);
+    tex.needsUpdate = true;
+  };
+  escrever(null);
+  return escrever;
 }
 
 /** Poste de iluminação tipo cobra (braço + luminária), na beira do pátio. */
@@ -127,7 +165,7 @@ function makeTruckCenter() {
 
   const buildZ = -LOT_D / 2 + BUILD_D / 2;
   addBuilding(g, -LOT_W / 2 + 13, buildZ);
-  addCallBoard(g, LOT_W / 2 - 6, -LOT_D / 2 + 3);
+  g.userData.chamarNoTelao = addCallBoard(g, LOT_W / 2 - 6, -LOT_D / 2 + 3);
 
   // --- vagas de espera: linhas pintadas no piso ---
   // as vagas ocupam a frente do pátio; a faixa junto ao prédio (−Z) é via de
