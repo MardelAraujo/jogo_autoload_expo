@@ -5,15 +5,23 @@ import { useKioskStore } from "@/state/kiosk-store";
 import { confirmarLead as salvarLead } from "@/lib/ranking";
 import { maskWhats, tocar } from "@/lib/utils";
 import { AutoloadLogo } from "@/components/AutoloadLogo";
+import { BotaoVoltar } from "@/components/BotaoVoltar";
 
 export function LeadScreen() {
   const { irPara, somAtivo, setCurrentLead } = useKioskStore();
-  const [nome, setNome] = useState("");
-  const [empresa, setEmpresa] = useState("");
-  const [whats, setWhats] = useState("");
-  const [cargo, setCargo] = useState("");
-  const [email, setEmail] = useState("");
-  const [lgpd, setLgpd] = useState(false);
+  // Quem volta do montador para corrigir um campo reencontra o que digitou.
+  // O lead já está no store desde o envio, então basta nascer lendo dele —
+  // e `irPara("start")` o limpa, para o próximo visitante não herdar os dados
+  // de quem jogou antes (ver kiosk-store).
+  const inicial = useKioskStore.getState().currentLead;
+  const [nome, setNome] = useState(inicial?.nome ?? "");
+  const [empresa, setEmpresa] = useState(inicial?.empresa ?? "");
+  const [whats, setWhats] = useState(inicial?.whats ?? "");
+  const [cargo, setCargo] = useState(inicial?.cargo ?? "");
+  const [email, setEmail] = useState(inicial?.email ?? "");
+  // O aceite volta marcado junto: quem já consentiu não precisa consentir de
+  // novo por ter voltado uma tela.
+  const [lgpd, setLgpd] = useState(inicial != null);
   const [erros, setErros] = useState({ nome: false, empresa: false, whats: false, email: false, lgpd: false });
 
   function voltarParaStart() {
@@ -46,6 +54,7 @@ export function LeadScreen() {
 
   return (
     <div id="screen-lead" className="overlay">
+      <BotaoVoltar para="start" />
       <div className="overlay-card">
         <span className="lead-logo">
           <AutoloadLogo />

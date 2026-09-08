@@ -8,17 +8,16 @@ import { Icone } from "@/components/Icone";
  * ~5 gestos consolidados no lugar dos 16 montarMissao* bespoke da referência
  * (linhas 10655-11130) — simplificação #3 do AGENTS.md do port. Cada etapa do
  * circuito (STAGES_DEF) mapeia pra UM destes gestos (em vez de dois sorteados
- * por alerta como na referência): select (toque na opção certa), hold
- * (segurar), checklist (múltiplos toques), slider (arrastar) e counter
- * (toques em sequência) — mesma família de gesto, texto/contexto diferente
+ * por alerta como na referência): select (toque na opção certa), timing
+ * (toque no tempo certo), checklist (múltiplos toques), slider (arrastar) e
+ * counter (toques em sequência) — mesma família de gesto, texto/contexto diferente
  * por etapa, o suficiente pra cada parada continuar tendo "a sua" missão.
  */
-export type MissionKind = "select" | "hold" | "checklist" | "slider" | "counter";
+export type MissionKind = "select" | "timing" | "checklist" | "slider" | "counter";
 
 export interface MissionConfig {
   kind: MissionKind;
   label: string;
-  holdMs?: number;
   count?: number;
   items?: string[];
 }
@@ -34,22 +33,22 @@ const CHECKLIST_VISTORIA = [
 // Porte simplificado de MISSAO_POR_ETAPA (referência, linha 11131).
 export const STAGE_MISSAO: Record<string, MissionConfig> = {
   checkin: { kind: "select", label: "Toque na placa correta da lista" },
-  patio: { kind: "hold", label: "Segure para chamar o motorista no pátio", holdMs: 1100 },
+  patio: { kind: "timing", label: "Chame o motorista na hora certa" },
   acesso_in: { kind: "counter", label: "Carimbar a autorização de entrada", count: 2 },
-  pesagem1: { kind: "hold", label: "Segure para ler a balança", holdMs: 1300 },
+  pesagem1: { kind: "timing", label: "Trave a leitura da balança no ponto" },
   vistoria: { kind: "checklist", label: "Confira os itens de segurança", items: CHECKLIST_VISTORIA },
   carga: { kind: "counter", label: "Conectar aterramento e liberar a carga", count: 3 },
   pesagem2: { kind: "slider", label: "Arraste para confirmar a pesagem" },
   saida: { kind: "counter", label: "Carimbar a liberação de saída", count: 2 },
-  checkout: { kind: "hold", label: "Segure para emitir a NF-e", holdMs: 1300 },
+  checkout: { kind: "timing", label: "Emita a NF-e no ponto certo" },
 };
 
 export function MissionWidget({ config, placa, onDone }: { config: MissionConfig; placa: string; onDone: () => void }) {
   switch (config.kind) {
     case "select":
       return <SelectMission placa={placa} onDone={onDone} />;
-    case "hold":
-      return <HoldMission ms={config.holdMs ?? 1100} onDone={onDone} />;
+    case "timing":
+      return <TimingMission onDone={onDone} />;
     case "checklist":
       return <ChecklistMission items={config.items ?? []} onDone={onDone} />;
     case "slider":
@@ -91,99 +90,86 @@ function SelectMission({ placa, onDone }: { placa: string; onDone: () => void })
   );
 }
 
-// ---- pesagem/pátio/check-out: segurar até completar ----
+// ---- pesagem/pátio/check-out: tocar quando o marcador entra na faixa ----
 /**
- * A barra e o relógio do toque são a MESMA medida: um requestAnimationFrame
- * escreve a largura do preenchimento e é ele próprio quem chama onDone ao
- * chegar em 1. A versão anterior tinha dois relógios — um setTimeout(ms) para
- * concluir e uma `transition:width` do CSS para desenhar — e os dois se
- * desencontravam:
+ * Substituiu o "segurar". O gesto de segurar não vingava no totem: ele exige
+ * que o dedo fique parado por mais de um segundo numa tela que o visitante
+ * está usando às pressas, e QUALQUER coisa que interrompa o ponteiro no meio
+ * — escorregar, a palma encostando, o navegador decidindo que aquilo era
+ * rolagem — devolve a barra a zero sem explicar nada. Quem tocava e soltava
+ * concluía que o botão estava quebrado.
  *
- * - a transição era zerada para 1ms em `prefers-reduced-motion:reduce`, que é
- *   o que o Chrome informa quando os efeitos de animação do Windows estão
- *   desligados. A barra enchia de uma vez no primeiro quadro e ficava cheia
- *   1,3 s: nenhum aviso de que era preciso continuar segurando, e quem tocava
- *   e soltava concluía que o botão só funcionava de vez em quando;
- * - soltar no meio devolvia a barra a zero na mesma transição de 1,3 s. Quem
- *   tentasse de novo antes de ela esvaziar começava com a barra pela metade,
- *   agora atrasada em relação ao toque.
+ * Aqui o gesto é o mesmo de todo o resto do jogo: um toque. O marcador varre
+ * o trilho de ponta a ponta, e o toque só precisa cair enquanto ele cruza a
+ * faixa. Errar não custa a missão — o marcador continua andando e a pessoa
+ * tenta de novo; quem cobra o tempo é o limite do próprio alerta.
  *
- * Como a largura passou a ser escrita quadro a quadro, o CSS do preenchimento
- * não tem (nem pode ter) `transition` — o navegador interpolaria por cima do
- * valor recém-escrito.
+ * A folga é deliberada: a faixa ocupa um terço do trilho e a varrida leva 1,5
+ * s, então a janela de acerto é de quase meio segundo, e ela reaparece a cada
+ * ida e volta. É para ser fácil — o que se pede aqui é atenção, não perícia.
  */
-function HoldMission({ ms, onDone }: { ms: number; onDone: () => void }) {
-  const fillRef = useRef<HTMLSpanElement>(null);
+/** Onde a faixa de acerto começa e termina, em % do trilho. */
+const QTE_ALVO_INI = 34;
+const QTE_ALVO_FIM = 66;
+/** Tempo de uma varrida de ponta a ponta; a volta leva o mesmo. */
+const QTE_VARRIDA_MS = 1500;
+/** Quanto tempo o aviso de erro fica na tela. */
+const QTE_ERRO_MS = 260;
+
+function TimingMission({ onDone }: { onDone: () => void }) {
+  const marcaRef = useRef<HTMLSpanElement>(null);
+  /** Posição em % do trilho. Fica num ref, e não no estado, porque quem a lê é
+   *  o clique — pôr no estado redesenharia o cartão 60 vezes por segundo. */
+  const pos = useRef(0);
   const raf = useRef<number | null>(null);
-  const ponteiro = useRef<number | null>(null);
   const feito = useRef(false);
+  const erroTimer = useRef<ReturnType<typeof setTimeout> | null>(null);
+  const [errou, setErrou] = useState(false);
 
-  function pintar(p: number) {
-    if (fillRef.current) fillRef.current.style.width = `${p * 100}%`;
-  }
-
-  function parar() {
-    if (raf.current !== null) cancelAnimationFrame(raf.current);
-    raf.current = null;
-  }
-
-  // Um toque pendente não pode sobreviver ao cartão: resolverAlertaManual()
-  // age sobre a CABEÇA da fila, então um quadro atrasado depois da troca de
-  // alerta resolveria a missão do caminhão seguinte de graça.
-  useEffect(() => parar, []);
-
-  function start(e: React.PointerEvent<HTMLButtonElement>) {
-    if (ponteiro.current !== null) return;
-    // Sem isto o toque longo do totem vira seleção de texto/gesto do
-    // navegador, que responde com pointercancel no meio da contagem.
-    e.preventDefault();
-    ponteiro.current = e.pointerId;
-    // `feito` vale por toque, não pela vida do botão: resolverAlertaManual()
-    // ignora alerta que ainda não é a cabeça da fila, e um travamento
-    // definitivo aqui deixaria o cartão na tela com o botão morto.
-    feito.current = false;
-    // Captura: dedo que escorrega alguns pixels — ou sai do botão — continua
-    // segurando. Era o `onPointerLeave` que cancelava a missão a cada tremida.
-    try {
-      e.currentTarget.setPointerCapture(e.pointerId);
-    } catch {
-      /* ponteiro já solto: segue sem captura, os eventos continuam no alvo */
-    }
+  // Nem o quadro nem o aviso de erro podem sobreviver ao cartão:
+  // resolverAlertaManual() age sobre a CABEÇA da fila, então qualquer resto
+  // pendente depois da troca de alerta mexeria na missão do caminhão seguinte.
+  useEffect(() => {
     const t0 = performance.now();
-    const passo = () => {
-      const p = Math.min(1, (performance.now() - t0) / ms);
-      pintar(p);
-      if (p < 1) {
-        raf.current = requestAnimationFrame(passo);
-        return;
-      }
-      raf.current = null;
-      feito.current = true;
-      onDone();
+    const passo = (agora: number) => {
+      // Ida e volta num ciclo só: a primeira metade vai de 0 a 1, a segunda
+      // desfaz o caminho. Sem `transition` no CSS pelo mesmo motivo da barra
+      // que existia aqui antes — o navegador interpolaria por cima do valor
+      // recém-escrito, e o marcador desenhado atrasaria em relação ao que o
+      // clique lê. É também o que mantém o movimento em
+      // prefers-reduced-motion, onde uma transição seria zerada: aqui ele não
+      // é enfeite, é a própria mecânica.
+      const fase = ((agora - t0) % (QTE_VARRIDA_MS * 2)) / QTE_VARRIDA_MS;
+      pos.current = (fase <= 1 ? fase : 2 - fase) * 100;
+      if (marcaRef.current) marcaRef.current.style.left = `${pos.current}%`;
+      raf.current = requestAnimationFrame(passo);
     };
     raf.current = requestAnimationFrame(passo);
-  }
+    return () => {
+      if (raf.current !== null) cancelAnimationFrame(raf.current);
+      if (erroTimer.current !== null) clearTimeout(erroTimer.current);
+    };
+  }, []);
 
-  // Só o ponteiro que começou o toque encerra: um segundo dedo (palma no
-  // totem) não derruba mais a contagem de quem está segurando.
-  function cancel(e: React.PointerEvent<HTMLButtonElement>) {
-    if (ponteiro.current === null || e.pointerId !== ponteiro.current) return;
-    ponteiro.current = null;
-    parar();
-    if (!feito.current) pintar(0);
+  function tocar() {
+    if (feito.current) return;
+    if (pos.current >= QTE_ALVO_INI && pos.current <= QTE_ALVO_FIM) {
+      feito.current = true;
+      onDone();
+      return;
+    }
+    setErrou(true);
+    if (erroTimer.current !== null) clearTimeout(erroTimer.current);
+    erroTimer.current = setTimeout(() => setErrou(false), QTE_ERRO_MS);
   }
 
   return (
-    <button
-      type="button"
-      className="missao-hold"
-      onPointerDown={start}
-      onPointerUp={cancel}
-      onPointerCancel={cancel}
-      onLostPointerCapture={cancel}
-    >
-      <span className="hold-fill" ref={fillRef} />
-      <span className="hold-txt">SEGURE para confirmar</span>
+    <button type="button" className={`missao-qte${errou ? " errou" : ""}`} onClick={tocar}>
+      <span className="qte-trilho">
+        <span className="qte-alvo" />
+        <span className="qte-marca" ref={marcaRef} />
+      </span>
+      <span className="qte-txt">{errou ? "fora da faixa — tente de novo" : "TOQUE na faixa"}</span>
     </button>
   );
 }
@@ -192,11 +178,20 @@ function HoldMission({ ms, onDone }: { ms: number; onDone: () => void }) {
 function ChecklistMission({ items, onDone }: { items: string[]; onDone: () => void }) {
   const sorteados = useMemo(() => items.slice().sort(() => Math.random() - 0.5).slice(0, 3), [items]);
   const [marcados, setMarcados] = useState<boolean[]>(() => sorteados.map(() => false));
+  // O respiro de 220 ms existe pra última marca ser VISTA antes do cartão sair.
+  // Guardado num ref e cancelado na desmontagem pelo mesmo motivo das outras
+  // missões: resolverAlertaManual() age sobre a cabeça da fila, e um disparo
+  // atrasado depois da troca de alerta resolveria de graça a missão do
+  // caminhão seguinte.
+  const timer = useRef<ReturnType<typeof setTimeout> | null>(null);
+  useEffect(() => () => {
+    if (timer.current !== null) clearTimeout(timer.current);
+  }, []);
   function toggle(i: number) {
     const next = marcados.slice();
     next[i] = !next[i];
     setMarcados(next);
-    if (next.every(Boolean)) setTimeout(onDone, 220);
+    if (next.every(Boolean)) timer.current = setTimeout(onDone, 220);
   }
   return (
     <>

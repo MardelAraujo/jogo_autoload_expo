@@ -11,6 +11,7 @@ import type { Alerta, HUDSnapshot } from "@/lib/three/sim/engine";
 import { MissionWidget } from "@/lib/three/sim/missions";
 import { AutoConsole } from "@/lib/three/sim/auto-console";
 import { AutoloadLogo } from "@/components/AutoloadLogo";
+import { BotaoVoltar } from "@/components/BotaoVoltar";
 import { Icone } from "@/components/Icone";
 
 /**
@@ -21,18 +22,53 @@ import { Icone } from "@/components/Icone";
  */
 const POLL_MS = 120;
 
+/** Fatia fixa do motor: 60 Hz, a mesma cadência que ele sempre teve em máquina boa. */
+const PASSO_S = 1 / 60;
+/** Teto de fatias por quadro — 8 dão ~133 ms, o bastante para acompanhar até
+ *  ~7 FPS sem deixar um quadro atrasado virar meio segundo de trabalho de uma
+ *  vez (o que travaria ainda mais a máquina que já está sofrendo). */
+const MAX_PASSOS = 8;
+/** Acima disto não é lentidão, é a aba ter ficado em segundo plano: descarta
+ *  em vez de tentar recuperar. */
+const MAX_ATRASO_S = 0.5;
+
 export function SimScreen() {
   const [hud, setHud] = useState<HUDSnapshot | null>(null);
+  const ultimoNow = useRef(0);
+  const resto = useRef(0);
 
   useEffect(() => {
     const sel = useKioskStore.getState().sel;
     if (!engine.simRef.current) engine.iniciarSimulacao(sel);
     tocar("ok", useKioskStore.getState().somAtivo);
+    ultimoNow.current = performance.now();
+    resto.current = 0;
 
     simTickRef.current = (renderer, dt, now) => {
       const sim = engine.simRef.current;
       if (!sim) return;
-      const acabou = engine.tickSim(sim, dt, now);
+      void dt;
+      // Quanto tempo REAL passou desde o quadro anterior. Não dá para usar o
+      // `dt` do loop: ele chega limitado a 0,05 s (tick.ts), e esse limite é
+      // justamente o que fazia o caminhão andar em câmera lenta em máquina
+      // fraca — abaixo de 20 FPS cada quadro avançava no máximo 50 ms de
+      // simulação enquanto o relógio do turno, que vem de `now`, seguia em
+      // tempo real. O teto continua existindo lá para o preview e o editor,
+      // onde ele resolve o salto de quem volta de uma aba em segundo plano.
+      const dtReal = Math.min(MAX_ATRASO_S, (now - ultimoNow.current) / 1000);
+      ultimoNow.current = now;
+
+      // Passo fixo com acumulador: o motor sempre roda em fatias de PASSO_S,
+      // quantas couberem no tempo que passou de verdade. Assim a simulação
+      // acompanha o relógio de parede em vez de acompanhar a taxa de quadros
+      // — em máquina lenta ela fica ENGASGADA, que é honesto, em vez de
+      // LENTA, que parecia defeito do jogo.
+      resto.current = Math.min(resto.current + dtReal, PASSO_S * MAX_PASSOS);
+      let acabou = false;
+      while (resto.current >= PASSO_S && !acabou) {
+        resto.current -= PASSO_S;
+        acabou = engine.tickSim(sim, PASSO_S, now);
+      }
       if (acabou) {
         sim.man.rotas.forEach((R) => { R.parado = true; });
         sim.auto.rotas.forEach((R) => { R.parado = true; });
@@ -74,6 +110,22 @@ export function SimScreen() {
   return (
     <div id="sim-ui" className="ativo">
       <div id="sim-topo">
+        {/* Dentro da faixa, e não flutuando por cima da tela: os placares de
+            cada lado penduram logo abaixo dela (.side-board), e um botão solto
+            no canto cobria o da operação manual.
+
+            `descartarSimulacao` é obrigatório aqui: o efeito de montagem só
+            chama `iniciarSimulacao` quando `simRef` está vazio, então sem o
+            descarte a próxima partida RETOMARIA esta, com o relógio e o placar
+            de onde pararam. É o mesmo par de linhas que o "Tentar novamente"
+            do fim de turno já faz. */}
+        <BotaoVoltar
+          para="builder"
+          antes={() => {
+            engine.descartarSimulacao();
+            engine.endResultRef.current = null;
+          }}
+        />
         <div className="hud-leitura">
           <span className="l">Tempo</span>
           <span id="sim-timer" className={hud.restante <= 20 ? "acabando" : ""}>

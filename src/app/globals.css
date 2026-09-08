@@ -990,31 +990,36 @@ button .ico-ds { margin-right:var(--e-2); }
    sem virar um problema de acerto do dedo: o resto do aperto veio da moldura
    (padding, tipografia, respiros), não do que se toca. */
 .alerta-missao { cursor:default; --missao-alvo:47px; min-height:120px; }
-/* `touch-action:none` e não `manipulation`: o cartão mora dentro de
-   #alertas-man, que rola. Com `manipulation` o dedo que escorrega durante o
-   segundo e pouco de toque ainda podia virar rolagem, e o navegador encerra o
-   toque com pointercancel — a missão morria no meio sem o visitante entender
-   por quê. Aqui não há nada para arrastar: o gesto é só segurar. */
+/* O botão simples de "TOQUE para resolver" — a saída que o SimScreen usa
+   quando a etapa não declara missão nenhuma. O nome é herança da época em que
+   esta era a missão de SEGURAR; hoje o gesto é um toque só, e por isso
+   `manipulation` basta (o `touch-action:none` de antes existia para o dedo que
+   escorregava durante o segundo e pouco de toque não virar rolagem). */
 .missao-hold { position:relative; overflow:hidden; width:100%; margin-top:4px; border:none; border-radius:var(--r-input);
   padding:8px 12px; min-height:var(--missao-alvo,47px); font-size:15px; font-weight:800; color:#fff; background:#2a2a2a; text-align:center;
-  touch-action:none; }
-/* SEM `transition`: quem escreve esta largura é o rAF de HoldMission
-   (missions.tsx), quadro a quadro, e uma interpolação do navegador por cima
-   só atrasaria a barra em relação ao toque que ela mede. Pelo mesmo motivo
-   este preenchimento não some em prefers-reduced-motion — ele não é enfeite,
-   é o único aviso de que o toque precisa CONTINUAR. Zerá-lo enchia a barra de
-   uma vez e fazia o botão parecer quebrado em toda máquina com os efeitos de
-   animação do Windows desligados. */
-.missao-hold .hold-fill { position:absolute; inset:0; width:0; background:var(--primary); }
-.missao-hold .hold-txt { position:relative; z-index:1; }
+  touch-action:manipulation; }
+/* ===== toque no tempo certo (missões de pátio, pesagem e check-out) =====
+   O marcador varre o trilho e o toque precisa cair enquanto ele cruza a faixa.
 
-/* pátio: segurar com barra de progresso separada do botão */
-.missao-hold2 { width:100%; margin-top:5px; border:none; border-radius:var(--r-input); padding:8px 12px;
-  min-height:var(--missao-alvo,47px); font-size:15px; font-weight:800; color:#fff; background:#2a2a2a; touch-action:manipulation; }
-.missao-barra { position:relative; height:9px; background:#2a2a2a; border-radius:var(--r-pill); margin-top:5px; overflow:hidden; }
-.missao-barra-fill { position:absolute; inset:0; width:0; background:var(--primary); transition:width var(--hold-ms,1400ms) linear; }
-.missao-hold2.segurando + .missao-barra .missao-barra-fill { width:100%; }
-@media (prefers-reduced-motion:reduce){ .missao-barra-fill{ transition-duration:1ms !important; } }
+   O `left` do marcador é escrito quadro a quadro pelo rAF de TimingMission
+   (missions.tsx), então aqui NÃO pode haver `transition`: o navegador
+   interpolaria por cima do valor recém-escrito e o marcador desenhado ficaria
+   atrás do que o clique lê. É também por isso que ele continua se movendo em
+   prefers-reduced-motion — o movimento aqui não é enfeite, é a mecânica.
+
+   O botão inteiro é o alvo do toque: no totem ninguém mira o trilho de 14 px. */
+.missao-qte { position:relative; width:100%; margin-top:4px; border:none; border-radius:var(--r-input);
+  padding:9px 12px; min-height:var(--missao-alvo,47px); background:#2a2a2a; color:#fff;
+  display:flex; flex-direction:column; justify-content:center; gap:8px; touch-action:manipulation; }
+.missao-qte .qte-trilho { position:relative; display:block; height:14px; background:#1b1b1b;
+  border-radius:var(--r-pill); overflow:hidden; }
+.missao-qte .qte-alvo { position:absolute; top:0; bottom:0; left:34%; width:32%; background:var(--ok); opacity:.55; }
+.missao-qte .qte-marca { position:absolute; top:0; bottom:0; left:0; width:4px; margin-left:-2px; background:#fff; }
+.missao-qte .qte-txt { font-size:12.5px; font-weight:800; letter-spacing:.04em; text-align:center; }
+/* Errar não custa a missão, então o aviso é só um pulso na borda — nada que
+   pareça punição nem que empurre o layout. */
+.missao-qte.errou { box-shadow:inset 0 0 0 2px var(--err); }
+.missao-qte.errou .qte-txt { color:var(--err); }
 
 /* vistoria / carga: checklist de itens de segurança */
 .missao-chk { display:flex; align-items:center; gap:9px; width:100%; text-align:left; border:1.5px solid var(--border);
@@ -1057,11 +1062,6 @@ button .ico-ds { margin-right:var(--e-2); }
   min-height:var(--missao-alvo,47px); font-size:15px; font-weight:800; color:#fff; background:#2a2a2a; touch-action:manipulation; }
 .missao-carimbo:active { transform:scale(.96); }
 .missao-carimbo.pronta { background:var(--warn); color:#241a00; animation:pulseArmado .65s infinite; }
-
-/* pátio: segurar com estática no rádio — barra controlada via rAF, sofre recuos aleatórios */
-.missao-barra.instavel .missao-barra-fill { transition:none; }
-.missao-barra.instavel.crepitando { animation:staticFlicker .16s steps(2) infinite; }
-@keyframes staticFlicker { 50%{ opacity:.4; } }
 
 /* carga: contador de compartimentos — toque repetido num único alvo, sem toggle */
 .missao-contador { width:100%; margin-top:5px; border:none; border-radius:var(--r-input); padding:8px 12px;
@@ -1487,3 +1487,42 @@ button.ed-dup { border-color:var(--steel); color:var(--ink-dim); background:tran
 .ed-centro .ed-painel { padding:26px 30px; max-width:420px; text-align:center; }
 .ed-centro h2 { font-size:19px; margin-bottom:8px; }
 .ed-centro p { font-size:12.5px; line-height:1.6; color:var(--ink-dim); margin-bottom:14px; }
+
+/* ===== seta de voltar =====
+   Nas duas telas que não tinham saída nenhuma: o lead (onde o único voltar era
+   um clique escondido no eyebrow) e a simulação (que não tinha saída alguma). O
+   builder já tem o seu no rodapé, com rótulo, e continua com ele.
+
+   Fixa na viewport porque as duas têm moldura diferente — cartão centrado no
+   lead, HUD de turno na sim — e só a âncora na tela faz ela cair no mesmo lugar
+   nas duas.
+
+   `pointer-events:auto` não é enfeite: dentro de #sim-ui o container inteiro é
+   pointer-events:none pro arraste alcançar o canvas, então sem esta linha a
+   seta é desenhada e não recebe o toque.
+
+   Quadrada como todo o resto (--r-pill é 0 neste design), e 56 px de lado — o
+   mesmo alvo de dedo dos outros botões. */
+.btn-voltar { position:fixed; top:14px; left:14px; z-index:120; pointer-events:auto;
+  width:56px; height:56px; min-height:0; padding:0; display:flex; align-items:center;
+  justify-content:center; background:rgba(28,34,43,.86); border:1.3px solid var(--steel-dim);
+  color:var(--ink-dim); }
+.btn-voltar:not(:disabled):hover { background:var(--brand-gradient) no-repeat;
+  border-color:transparent; color:#fff; }
+/* Na simulação a seta deixa de ser cartão flutuante e vira ITEM da faixa do
+   turno: encostada à esquerda, na altura do relógio, do mesmo jeito que
+   #sim-pontos-box se encosta à direita. Solta no canto ela cobria o placar da
+   operação manual, que pendura logo abaixo da faixa (.side-board).
+
+   `position:absolute` (e não um flex item) porque #sim-topo centraliza os
+   mostradores: no fluxo, a seta empurraria o relógio para fora do meio. */
+#sim-topo .btn-voltar { position:absolute; left:calc(var(--h)*1.4); top:50%; transform:translateY(-50%);
+  width:calc(var(--hud-topo)*.66); height:calc(var(--hud-topo)*.66);
+  background:transparent; border-color:var(--steel-dim); color:var(--steel); }
+#sim-topo .btn-voltar:not(:disabled):hover { background:var(--brand-gradient) no-repeat;
+  border-color:transparent; color:#fff; }
+/* O montador ganhou a seta no mesmo canto, e a etiqueta do enquadramento
+   ("Panorâmica") nascia exatamente embaixo dela. Empurra a etiqueta para a
+   direita da seta em vez de mover a seta: o canto superior esquerdo é o lugar
+   do voltar em todas as telas, e é ele que precisa ficar previsível. */
+#screen-builder #mq-local { left:calc(70px + var(--u)*.7); }

@@ -15,6 +15,7 @@ import {
   type MqLegenda,
 } from "@/lib/three/maquete";
 import { AutoloadLogo } from "@/components/AutoloadLogo";
+import { BotaoVoltar } from "@/components/BotaoVoltar";
 import { Icone, type NomeIcone } from "@/components/Icone";
 import { tocar } from "@/lib/utils";
 
@@ -105,6 +106,7 @@ export function BuilderScreen() {
 
   return (
     <div id="screen-builder" className="overlay">
+      <BotaoVoltar para="lead" />
       <aside id="builder-visor" aria-hidden="true">
         <div id="mq-scope" ref={mqScopeRef}>
           <span className="mq-tick tl" />
@@ -198,9 +200,10 @@ export function BuilderScreen() {
           <span className="bm-tag">Simple · Smart · Reliable</span>
         </div>
         <div id="builder-foot">
-          <button className="btn-ghost" onClick={() => irPara("lead")}>
-            <Icone nome="voltar" tam={20} />Voltar
-          </button>
+          {/* O "Voltar" com rótulo que morava aqui saiu: a seta do canto faz o
+              mesmo caminho, e dois botões de voltar na mesma tela só dividiam a
+              atenção de quem está diante do totem. O rodapé fica com a única
+              coisa que leva adiante. */}
           <button className="btn-primary" onClick={() => irPara("sim")}>
             <Icone nome="iniciar" tam={20} />Iniciar operação · <span id="btn-simular-tempo">{minutos} min</span> <span className="seta-cta">→</span>
           </button>
