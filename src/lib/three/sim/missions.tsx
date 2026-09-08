@@ -104,15 +104,18 @@ function SelectMission({ placa, onDone }: { placa: string; onDone: () => void })
  * faixa. Errar não custa a missão — o marcador continua andando e a pessoa
  * tenta de novo; quem cobra o tempo é o limite do próprio alerta.
  *
- * A folga é deliberada: a faixa ocupa um terço do trilho e a varrida leva 1,5
- * s, então a janela de acerto é de quase meio segundo, e ela reaparece a cada
- * ida e volta. É para ser fácil — o que se pede aqui é atenção, não perícia.
+ * A folga é deliberada: a faixa ocupa um terço do trilho e a varrida leva 2,5
+ * s, então a janela de acerto passa de oito décimos de segundo, e ela reaparece
+ * a cada ida e volta. É para ser fácil — o que se pede aqui é atenção, não
+ * perícia.
  */
 /** Onde a faixa de acerto começa e termina, em % do trilho. */
 const QTE_ALVO_INI = 34;
 const QTE_ALVO_FIM = 66;
-/** Tempo de uma varrida de ponta a ponta; a volta leva o mesmo. */
-const QTE_VARRIDA_MS = 1500;
+/** Tempo de uma varrida de ponta a ponta; a volta leva o mesmo.
+ *  Era 1500 ms e o marcador passava rápido demais para o totem: 2500 deixa o
+ *  percurso 40% mais devagar (a velocidade é o inverso deste número). */
+const QTE_VARRIDA_MS = 2500;
 /** Quanto tempo o aviso de erro fica na tela. */
 const QTE_ERRO_MS = 260;
 
